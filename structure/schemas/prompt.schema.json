@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Forge SDD Toolkit Prompt Schema",
+  "type": "object",
+  "required": ["type", "level", "created", "author"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["prompt", "system", "framework"]
+    },
+    "level": {
+      "type": "string",
+      "enum": ["orchestrator", "system", "framework"]
+    },
+    "stage": {
+      "type": "string",
+      "enum": ["ideate", "architect", "plan", "implement", "test", "operate"]
+    },
+    "created": {
+      "type": "string",
+      "format": "date"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "author": {
+      "type": "string"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
