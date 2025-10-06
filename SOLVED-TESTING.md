@@ -2,7 +2,20 @@
 
 ## 🎯 Problema Original
 
-**Situação**: Você precisava testar o funcionamento do toolkit em um projeto real, mas:
+**Situação**: V### 3. Usar os Prompts do Copilot
+
+No GitHub Copilot Chat:
+
+```
+@forge-ideate
+
+Preciso de um painel em Jira que mostre PRs do GitHub linkados ao issue.
+```
+
+Copilot irá:
+1. Ler o prompt de `.github/prompts/forge-ideate.prompt.md`
+2. Aplicar a metodologia SDD
+3. Gerar `docs/specification-document.md` completotestar o funcionamento do toolkit em um projeto real, mas:
 - Os slash commands do GitHub Copilot requerem prompts em `.github/prompts/`
 - Colocar isso no workspace do toolkit bagunçaria o contexto de desenvolvimento
 - Não havia forma de criar projetos de teste com a estrutura correta
@@ -31,20 +44,19 @@ Cria automaticamente:
 ```
 projeto-teste/
 ├── .github/
-│   └── prompts/              ← CORRETO para slash commands
-│       ├── base/
-│       │   ├── system-prompt.md
-│       │   └── decision-framework.md
-│       └── commands/
-│           ├── forge-ideate.md       ← @workspace /forge-ideate
-│           ├── forge-architect.md    ← @workspace /forge-architect
-│           ├── forge-plan.md         ← @workspace /forge-plan
-│           ├── forge-implement.md    ← @workspace /forge-implement
-│           ├── forge-test.md         ← @workspace /forge-test
-│           └── forge-operate.md      ← @workspace /forge-operate
+│   └── prompts/              ← CORRETO para GitHub Copilot
+│       ├── forge-ideate.prompt.md       ← @forge-ideate
+│       ├── forge-architect.prompt.md    ← @forge-architect
+│       ├── forge-plan.prompt.md         ← @forge-plan
+│       ├── forge-implement.prompt.md    ← @forge-implement
+│       ├── forge-test.prompt.md         ← @forge-test
+│       ├── forge-operate.prompt.md      ← @forge-operate
+│       └── _base/                       ← Referência (não aparecem no @)
+│           ├── system-prompt.md
+│           └── decision-framework.md
 │
 ├── .vscode/
-│   └── settings.json         ← Slash commands auto-configurados
+│   └── settings.json         ← Instruções base do Copilot
 │
 ├── docs/                     ← Documentos SDD vão aqui
 ├── schemas/                  ← Validação de documentos
@@ -100,27 +112,27 @@ Copilot irá:
 
 ```bash
 # 1. IDEATE
-@workspace /forge-ideate
+@forge-ideate
 # Gera: docs/specification-document.md
 
 # 2. ARCHITECT
-@workspace /forge-architect
+@forge-architect
 # Gera: docs/architecture-decision-document.md
 
 # 3. PLAN
-@workspace /forge-plan
+@forge-plan
 # Gera: docs/implementation-plan.md
 
 # 4. IMPLEMENT
-@workspace /forge-implement
+@forge-implement
 # Gera: src/manifest.yml, src/index.js, etc
 
 # 5. TEST
-@workspace /forge-test
+@forge-test
 # Gera: tests/ + docs/test-plan.md
 
 # 6. OPERATE
-@workspace /forge-operate
+@forge-operate
 # Gera: docs/operations-guide.md
 ```
 
@@ -133,9 +145,9 @@ $ tree ~/forge-test-app -L 2 -a
 
 ~/forge-test-app/
 ├── .github/
-│   └── prompts/              ✅ Prompts copiados
+│   └── prompts/              ✅ Prompts na raiz com .prompt.md
 ├── .vscode/
-│   └── settings.json         ✅ Slash commands configurados
+│   └── settings.json         ✅ Instruções base configuradas
 ├── docs/                     ✅ Pronto para documentos
 ├── schemas/                  ✅ 7 schemas copiados
 ├── templates/                ✅ Templates disponíveis
@@ -143,32 +155,29 @@ $ tree ~/forge-test-app -L 2 -a
 └── README.md                 ✅ Guia do usuário
 ```
 
-### Verificação dos Slash Commands
+### Verificação dos Prompts
 
 ```bash
-$ cat ~/forge-test-app/.vscode/settings.json | jq '.["github.copilot.chat.slashCommands"]'
+$ ls -la ~/forge-test-app/.github/prompts/
 
-[
-  {
-    "command": "forge-ideate",
-    "description": "IDEATE: Transform idea into formal specification",
-    "prompt": ".github/prompts/commands/forge-ideate.md"
-  },
-  {
-    "command": "forge-architect",
-    "description": "ARCHITECT: Make technical decisions...",
-    "prompt": ".github/prompts/commands/forge-architect.md"
-  },
-  ... (6 comandos total)
-]
+forge-ideate.prompt.md        ✅ Extensão .prompt.md
+forge-architect.prompt.md     ✅ Na raiz de prompts/
+forge-plan.prompt.md          ✅ Reconhecido pelo Copilot
+forge-implement.prompt.md
+forge-test.prompt.md
+forge-operate.prompt.md
+_base/                        ✅ Prompts de referência
 ```
 
 ## 📊 Comparação: Antes vs Depois
 
 | Aspecto | ❌ Antes | ✅ Depois |
 |---------|---------|-----------|
-| **Estrutura de Prompts** | `structure/prompts/` (errado) | `.github/prompts/` (correto) |
-| **Slash Commands** | Não funcionavam | Funcionam automaticamente |
+| **Estrutura de Prompts** | `structure/prompts/commands/*.md` | `.github/prompts/*.prompt.md` |
+| **Extensão de Arquivo** | `.md` (não reconhecido) | `.prompt.md` (reconhecido pelo Copilot) |
+| **Localização** | Subdiretório commands/ | Raiz de prompts/ |
+| **Como Usar** | Slash commands (descontinuado) | `@nome-prompt` (padrão atual) |
+| **Configuração** | slashCommands em settings.json | Automático (via extensão .prompt.md) |
 | **Teste do Toolkit** | Impossível sem bagunçar | Projetos isolados |
 | **Setup Manual** | ~30 minutos de cópia | ~10 segundos (script) |
 | **Documentação** | Genérica | Personalizada por projeto |
@@ -205,9 +214,10 @@ forge-sdd-toolkit/
    - Toolkit: Desenvolvimento e manutenção
    - Projeto Teste: Uso real dos prompts
 
-2. **Slash Commands Funcionais**:
-   - Auto-configurados no `.vscode/settings.json`
-   - Prompts em `.github/prompts/` (lugar correto)
+2. **Prompts Funcionais**:
+   - Extensão `.prompt.md` reconhecida automaticamente
+   - Na raiz de `.github/prompts/` (padrão do Copilot)
+   - Aparecem ao digitar `@` no Copilot Chat
 
 3. **Facilidade de Teste**:
    - Script automatizado
@@ -218,10 +228,10 @@ forge-sdd-toolkit/
    - Toolkit: Para contributors
    - Projeto: Para usuários finais
 
-5. **Reutilizável**:
-   - Criar quantos projetos de teste quiser
-   - Demonstrações para clientes
-   - Desenvolvimento real de apps
+5. **Padrão Atual do GitHub Copilot**:
+   - Não usa mais slash commands personalizados
+   - Usa arquivos `.prompt.md` na raiz de prompts/
+   - Detecção automática, sem configuração manual
 
 ## 🔄 Workflow de Teste
 

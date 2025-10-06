@@ -1,4 +1,24 @@
-# 🧪 Como Testar o forge-sdd-toolkit
+# 🧪 Como Testa```
+projeto-teste/
+├── .github/
+│   └── prompts/              # ← Prompts para GitHub Copilot
+│       ├── forge-ideate.prompt.md       # ← @forge-ideate
+│       ├── forge-architect.prompt.md    # ← @forge-architect
+│       ├── forge-plan.prompt.md         # ← @forge-plan
+│       ├── forge-implement.prompt.md    # ← @forge-implement
+│       ├── forge-test.prompt.md         # ← @forge-test
+│       ├── forge-operate.prompt.md      # ← @forge-operate
+│       └── _base/                       # ← Prompts de referência
+│           ├── system-prompt.md
+│           └── decision-framework.md
+├── .vscode/
+│   └── settings.json         # ← Instruções base do Copilot
+├── docs/                     # ← Documentos gerados vão aqui
+├── schemas/                  # ← Validação de documentos
+├── templates/                # ← Templates disponíveis
+├── specializations/          # ← Exemplos de referência
+└── README.md                 # ← Guia do usuário
+```t
 
 ## Problema Resolvido
 
@@ -56,13 +76,13 @@ Ou de qualquer lugar:
 code ~/meu-projeto-forge
 ```
 
-### 3. Testar os Slash Commands
+### 3. Testar os Prompts do Copilot
 
-No GitHub Copilot Chat, você terá 6 novos slash commands disponíveis:
+No GitHub Copilot Chat, você terá 6 prompts disponíveis quando digitar `@`:
 
-#### `/forge-ideate` - Criar Especificação
+#### `@forge-ideate` - Criar Especificação
 ```
-@workspace /forge-ideate
+@forge-ideate
 
 Preciso de um painel em Jira que mostre o status de PRs do GitHub
 associados ao issue. Deve mostrar:
@@ -72,9 +92,9 @@ associados ao issue. Deve mostrar:
 - Checks do CI/CD
 ```
 
-#### `/forge-architect` - Decisões Técnicas
+#### `@forge-architect` - Decisões Técnicas
 ```
-@workspace /forge-architect
+@forge-architect
 ```
 
 Copilot irá:
@@ -84,9 +104,9 @@ Copilot irá:
 - Definir APIs necessárias
 - Criar `docs/architecture-decision-document.md`
 
-#### `/forge-plan` - Criar Backlog
+#### `@forge-plan` - Criar Backlog
 ```
-@workspace /forge-plan
+@forge-plan
 ```
 
 Copilot irá:
@@ -95,9 +115,9 @@ Copilot irá:
 - Definir tasks com estimativas
 - Criar `docs/implementation-plan.md`
 
-#### `/forge-implement` - Gerar Código
+#### `@forge-implement` - Gerar Código
 ```
-@workspace /forge-implement
+@forge-implement
 ```
 
 Copilot irá:
@@ -106,9 +126,9 @@ Copilot irá:
 - Criar componentes UI
 - Adicionar comentários de rastreabilidade (REQ-XXX → TASK-XXX)
 
-#### `/forge-test` - Criar Testes
+#### `@forge-test` - Criar Testes
 ```
-@workspace /forge-test
+@forge-test
 ```
 
 Copilot irá:
@@ -117,9 +137,9 @@ Copilot irá:
 - Testes de integração
 - Cada teste rastreia para um requisito
 
-#### `/forge-operate` - Deployment
+#### `@forge-operate` - Deployment
 ```
-@workspace /forge-operate
+@forge-operate
 ```
 
 Copilot irá:
@@ -228,30 +248,39 @@ Preciso de um Jira Issue Panel que mostre PRs do GitHub.
 
 ## ✅ Validação
 
-### Verificar Slash Commands Disponíveis
+### Verificar Prompts Disponíveis
 
-1. Abra Command Palette (Cmd/Ctrl + Shift + P)
-2. Digite "GitHub Copilot: Show Available Commands"
-3. Deve ver:
-   - `/forge-ideate`
-   - `/forge-architect`
-   - `/forge-plan`
-   - `/forge-implement`
-   - `/forge-test`
-   - `/forge-operate`
+1. Abra o GitHub Copilot Chat
+2. Digite `@` e comece a digitar "forge"
+3. Deve ver autocomplete com:
+   - `@forge-ideate`
+   - `@forge-architect`
+   - `@forge-plan`
+   - `@forge-implement`
+   - `@forge-test`
+   - `@forge-operate`
+
+**Importante**: Os prompts aparecem automaticamente porque os arquivos têm extensão `.prompt.md` e estão em `.github/prompts/`
 
 ### Verificar Estrutura de Arquivos
 
 ```bash
 cd ~/meu-projeto-forge
 
-# Verificar prompts
-ls -la .github/prompts/commands/
-# Deve ter 6 arquivos .md
+# Verificar prompts (RAIZ com extensão .prompt.md)
+ls -la .github/prompts/
+# Deve ter:
+# - forge-ideate.prompt.md
+# - forge-architect.prompt.md
+# - forge-plan.prompt.md
+# - forge-implement.prompt.md
+# - forge-test.prompt.md
+# - forge-operate.prompt.md
+# - _base/ (diretório com prompts de referência)
 
 # Verificar VS Code config
 cat .vscode/settings.json
-# Deve ter slashCommands configurados
+# Deve ter github.copilot.chat.codeGeneration.instructions
 
 # Verificar schemas
 ls -la schemas/
@@ -264,25 +293,22 @@ ls -la templates/
 
 ## 🐛 Troubleshooting
 
-### Slash Commands não aparecem
+### Prompts não aparecem no Copilot Chat
 
-**Causa**: VS Code não carregou o `.vscode/settings.json`
-
-**Solução**:
-```bash
-# Recarregar VS Code
-Cmd/Ctrl + Shift + P → "Developer: Reload Window"
-```
-
-### Copilot não encontra os prompts
-
-**Causa**: Caminho incorreto em settings.json
+**Causa**: Arquivos não têm extensão `.prompt.md` ou não estão na raiz de `.github/prompts/`
 
 **Verificação**:
 ```bash
-# Os prompts DEVEM estar em .github/prompts/
-ls -la .github/prompts/commands/forge-ideate.md
-# Deve existir
+# Os prompts DEVEM estar assim:
+ls -la .github/prompts/forge-*.prompt.md
+# Devem existir 6 arquivos
+```
+
+**Solução**: Se os arquivos estão em subdiretórios ou sem extensão correta, mova-os:
+```bash
+cd .github/prompts/
+mv commands/forge-ideate.md ./forge-ideate.prompt.md
+# Repetir para todos os prompts
 ```
 
 ### Documentos não são validados
