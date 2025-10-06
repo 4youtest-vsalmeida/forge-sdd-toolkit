@@ -58,21 +58,43 @@ If YES: Proceed with implementation.
 
 ## Step 1: Setup Project Structure
 
-Start with TASK-1.1.1 (usually project setup):
+**CRITICAL**: Always use official Forge templates with `forge create`. Never create structure manually.
+
+### 1.1 Choose Correct Template
+
+Based on ADD Decision #2 (UI approach), select the appropriate template:
+
+| ADD Decision | Forge Template | Command |
+|--------------|----------------|---------|
+| UI Kit only | `jira-issue-panel` | `forge create --template jira-issue-panel my-app` |
+| Custom UI (React) | `jira-issue-panel-ui-kit-custom-ui` | `forge create --template jira-issue-panel-ui-kit-custom-ui my-app` |
+| Dashboard Gadget | `jira-dashboard-gadget` | `forge create --template jira-dashboard-gadget my-app` |
+| Confluence Macro | `confluence-hello-world` | `forge create --template confluence-hello-world my-app` |
+| Custom Field | `jira-custom-field` | `forge create --template jira-custom-field my-app` |
+| Workflow Function | See Forge docs | `forge create` (interactive) |
+
+**Complete list of templates**: Run `forge create --help` or see [Forge Templates Docs](https://developer.atlassian.com/platform/forge/cli-reference/create/)
+
+### 1.2 Create Project from Template
 
 ```bash
-# Initialize Forge app
+# Example for Jira Issue Panel with Custom UI (most common)
+forge create -t jira-issue-panel-ui-kit-custom-ui my-forge-app
+
+# Or interactive mode (recommended for first time)
 forge create
 
-# Setup directory structure per ADD
-mkdir -p src/{resolvers,ui,utils,types}
-mkdir -p test/{unit,integration}
-
-# Install dependencies
-npm install
+# Follow prompts:
+# 1. Select template matching ADD Decision #2
+# 2. Enter app name from specification
+# 3. Wait for initialization
 ```
 
-Create `manifest.yml` based on ADD decisions:
+### 1.3 Customize Generated Files
+
+The template creates the base structure. Now customize per ADD:
+
+**Update `manifest.yml`** with architecture decisions:
 
 ```yaml
 modules:
@@ -82,6 +104,7 @@ modules:
       function: main
       title: [Title from spec]
       icon: [appropriate icon]
+      # Template provides basic structure, customize as needed
 
 # From ADD Decision #5
 permissions:
@@ -89,14 +112,29 @@ permissions:
     - read:jira-work  # REQ-F-001
     - storage:app     # REQ-NFR-001 (caching)
   external:
-    - fetch:
-        backend:
-          - 'https://api.example.com/*'  # REQ-F-002
+    fetch:
+      backend:
+        - 'https://api.example.com/*'  # REQ-F-002
 
 # From ADD Decision #2
 app:
   runtime:
     name: nodejs18.x
+```
+
+**Install additional dependencies** per ADD:
+
+```bash
+cd my-forge-app
+
+# If ADD specifies charting library
+npm install chart.js
+
+# If ADD specifies date handling
+npm install date-fns
+
+# If ADD specifies testing tools
+npm install --save-dev @forge/cli-tests jest
 ```
 
 ## Step 2: Implement Tasks with Traceability

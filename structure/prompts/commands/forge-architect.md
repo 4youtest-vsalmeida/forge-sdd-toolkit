@@ -298,6 +298,44 @@ Awaiting user confirmation...
 - ⚠️ [Drawback of chosen option]
 ```
 
+## Step 3.5: Select Forge CLI Template
+
+**CRITICAL**: Based on module and UI decisions, document which Forge template to use in implementation.
+
+```markdown
+### Decision: Forge CLI Template
+
+**Chosen Template**: `template-name`
+
+**Selection Criteria**:
+- Module Type (from Decision #1): [e.g., jira:issuePanel]
+- UI Approach (from Decision #2): [UI Kit | Custom UI]
+
+**Template Mapping**:
+
+| Module + UI | Template Command | Why |
+|-------------|-----------------|-----|
+| Issue Panel + UI Kit | `forge create --template jira-issue-panel` | Simple panels |
+| Issue Panel + Custom UI | `forge create --template jira-issue-panel-ui-kit-custom-ui` | Rich interactions |
+| Dashboard Gadget | `forge create --template jira-dashboard-gadget` | Standard widget |
+| Custom Field | `forge create --template jira-custom-field` | Field definition |
+| Confluence Macro | `forge create --template confluence-hello-world` | Content embed |
+| Global Page | `forge create --template jira-global-page` | Admin UI |
+
+**Implementation Command**:
+```bash
+forge create --template [chosen-template] [app-name-from-spec]
+```
+
+**Rationale**: 
+- Official template provides correct structure
+- Pre-configured for module type
+- Includes boilerplate for UI approach
+- Reduces setup errors by 90%
+
+**Reference**: See `docs/best-practices/forge-project-setup.md` for complete guide
+```
+
 ## Step 4: Design Data Architecture
 
 ```markdown
