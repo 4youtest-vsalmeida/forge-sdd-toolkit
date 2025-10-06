@@ -16,6 +16,8 @@ import * as path from 'path';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import * as yaml from 'yaml';
+import { execSync } from 'child_process';
+import { copyFile, copyDirectory as copyDir, ensureDirectory, writeJSON } from '../utils/file-utils.js';
 const program = new Command();
 program
     .name('forge-sdd')
@@ -31,10 +33,10 @@ program
     .action(async (projectName, options) => {
     await initCommand(projectName, options);
 });
-async function initCommand(projectName, options) {
-    console.log(chalk.blue.bold('\n🎯 forge-sdd init\n'));
+async function initCommand(projectName, _options) {
+    console.log(chalk.bold.cyan('\n🚀 forge-sdd-toolkit initializer\n'));
     try {
-        // Get project name
+        // Step 1: Get project name
         let name = projectName;
         if (!name) {
             const answers = await inquirer.prompt([
@@ -43,44 +45,329 @@ async function initCommand(projectName, options) {
                     name: 'projectName',
                     message: 'Project name:',
                     default: 'my-forge-app',
-                    validate: (input) => input.length > 0 || 'Project name is required'
+                    validate: (input) => {
+                        if (!input || input.trim().length === 0) {
+                            return 'Project name is required';
+                        }
+                        if (!/^[a-z0-9-]+$/.test(input)) {
+                            return 'Project name must be lowercase letters, numbers, and hyphens only';
+                        }
+                        return true;
+                    }
                 }
             ]);
             name = answers.projectName;
         }
         const projectPath = path.resolve(process.cwd(), name);
-        const spinner = ora(`Creating project structure at ${chalk.cyan(projectPath)}`).start();
-        // Create directory structure
-        await fs.mkdir(projectPath, { recursive: true });
-        await fs.mkdir(path.join(projectPath, '.forge-sdd'), { recursive: true });
-        await fs.mkdir(path.join(projectPath, '.forge-sdd', 'prompts'), { recursive: true });
-        await fs.mkdir(path.join(projectPath, '.forge-sdd', 'templates'), { recursive: true });
-        await fs.mkdir(path.join(projectPath, '.forge-sdd', 'schemas'), { recursive: true });
-        await fs.mkdir(path.join(projectPath, 'docs'), { recursive: true });
-        spinner.text = 'Copying SDD prompts...';
-        // Copy prompts
-        const toolkitRoot = path.join(__dirname, '../../..');
-        const promptsSource = path.join(toolkitRoot, 'structure/prompts');
-        const promptsDest = path.join(projectPath, '.forge-sdd/prompts');
-        await copyDirectory(promptsSource, promptsDest);
-        spinner.text = 'Copying templates...';
-        // Copy templates
-        const templatesSource = path.join(toolkitRoot, 'structure/templates');
-        const templatesDest = path.join(projectPath, '.forge-sdd/templates');
-        await copyDirectory(templatesSource, templatesDest);
-        spinner.text = 'Copying schemas...';
-        // Copy schemas
-        const schemasSource = path.join(toolkitRoot, 'structure/schemas');
-        const schemasDest = path.join(projectPath, '.forge-sdd/schemas');
-        await copyDirectory(schemasSource, schemasDest);
-        spinner.text = 'Creating README...';
-        // Create project README
-        const readmeContent = generateProjectReadme(name, options?.template || 'basic');
-        await fs.writeFile(path.join(projectPath, 'README.md'), readmeContent);
-        // Create .gitignore
-        const gitignoreContent = `# SDD artifacts
-docs/*.draft.md
+        // Check if directory already exists
+        try {
+            await fs.access(projectPath);
+            console.log(chalk.red(`\n❌ Directory "${name}" already exists\n`));
+            process.exit(1);
+        }
+        catch {
+            // Directory doesn't exist, continue
+        }
+        // Step 2: Create directory structure
+        const spinner = ora('Creating project structure...').start();
+        try {
+            await createDirectoryStructure(projectPath);
+            spinner.succeed('Project structure created');
+        }
+        catch (error) {
+            spinner.fail('Failed to create structure');
+            throw error;
+        }
+        // Step 3: Copy GitHub Copilot prompts
+        spinner.start('Setting up GitHub Copilot prompts...');
+        try {
+            await copyGitHubPrompts(projectPath);
+            spinner.succeed('GitHub Copilot prompts ready (@forge-ideate, @forge-architect, ...)');
+        }
+        catch (error) {
+            spinner.fail('Failed to copy prompts');
+            throw error;
+        }
+        // Step 4: Copy SDD templates
+        spinner.start('Copying SDD templates...');
+        try {
+            await copySddTemplates(projectPath);
+            spinner.succeed('SDD templates ready');
+        }
+        catch (error) {
+            spinner.fail('Failed to copy templates');
+            throw error;
+        }
+        // Step 5: Copy validation schemas
+        spinner.start('Copying validation schemas...');
+        try {
+            await copySchemas(projectPath);
+            spinner.succeed('Validation schemas ready');
+        }
+        catch (error) {
+            spinner.fail('Failed to copy schemas');
+            throw error;
+        }
+        // Step 6: Generate project files
+        spinner.start('Generating project files...');
+        try {
+            await generateProjectFiles(projectPath, name);
+            spinner.succeed('Project files generated');
+        }
+        catch (error) {
+            spinner.fail('Failed to generate files');
+            throw error;
+        }
+        // Success!
+        console.log(chalk.green.bold('\n✅ Project initialized successfully!\n'));
+        console.log(chalk.cyan('📋 Next Steps:\n'));
+        console.log(`  1. ${chalk.bold(`cd ${name}`)}`);
+        console.log(`  2. ${chalk.bold('code .')} ${chalk.dim('(Open in VS Code)')}`);
+        console.log(`  3. ${chalk.bold('Open GitHub Copilot Chat')}`);
+        console.log(`  4. ${chalk.bold('Type: @forge-ideate')}`);
+        console.log(`  5. ${chalk.bold('Describe your app idea')}\n`);
+        console.log(chalk.dim(`📖 Read ${name}/README.md for detailed instructions\n`));
+    }
+    catch (error) {
+        console.error(chalk.red('\n❌ Error initializing project:\n'));
+        console.error(chalk.red(error instanceof Error ? error.message : String(error)));
+        process.exit(1);
+    }
+}
+/**
+ * Create base directory structure
+ */
+async function createDirectoryStructure(projectPath) {
+    const directories = [
+        '.github/prompts/_base',
+        '.forge-sdd/templates',
+        '.forge-sdd/schemas',
+        'docs',
+        '.vscode'
+    ];
+    for (const dir of directories) {
+        await ensureDirectory(path.join(projectPath, dir));
+    }
+}
+/**
+ * Copy GitHub Copilot prompts with transformation
+ */
+async function copyGitHubPrompts(projectPath) {
+    const toolkitRoot = path.join(__dirname, '../../..');
+    const promptsSource = path.join(toolkitRoot, 'structure/prompts');
+    const promptsDest = path.join(projectPath, '.github/prompts');
+    // Stage prompts (commands) - Transform and rename to .prompt.md
+    const stagePrompts = [
+        'forge-ideate.md',
+        'forge-architect.md',
+        'forge-plan.md',
+        'forge-implement.md',
+        'forge-test.md',
+        'forge-operate.md'
+    ];
+    for (const filename of stagePrompts) {
+        const sourcePath = path.join(promptsSource, 'commands', filename);
+        const destPath = path.join(promptsDest, filename.replace('.md', '.prompt.md'));
+        const relativeSourcePath = `structure/prompts/commands/${filename}`;
+        await copyFile(sourcePath, destPath, {
+            transform: true,
+            addHeader: true,
+            sourcePath: relativeSourcePath
+        });
+    }
+    // Base prompts - Transform but keep .md extension
+    const basePrompts = [
+        'system-prompt.md',
+        'decision-framework.md'
+    ];
+    for (const filename of basePrompts) {
+        const sourcePath = path.join(promptsSource, 'base', filename);
+        const destPath = path.join(promptsDest, '_base', filename);
+        const relativeSourcePath = `structure/prompts/base/${filename}`;
+        await copyFile(sourcePath, destPath, {
+            transform: true,
+            addHeader: true,
+            sourcePath: relativeSourcePath
+        });
+    }
+}
+/**
+ * Copy SDD templates (no transformation needed)
+ */
+async function copySddTemplates(projectPath) {
+    const toolkitRoot = path.join(__dirname, '../../..');
+    const templatesSource = path.join(toolkitRoot, 'structure/templates');
+    const templatesDest = path.join(projectPath, '.forge-sdd/templates');
+    await copyDir(templatesSource, templatesDest);
+}
+/**
+ * Copy validation schemas (no transformation needed)
+ */
+async function copySchemas(projectPath) {
+    const toolkitRoot = path.join(__dirname, '../../..');
+    const schemasSource = path.join(toolkitRoot, 'structure/schemas');
+    const schemasDest = path.join(projectPath, '.forge-sdd/schemas');
+    await copyDir(schemasSource, schemasDest);
+}
+/**
+ * Generate project files (README, .gitignore, etc.)
+ */
+async function generateProjectFiles(projectPath, projectName) {
+    // Generate README.md
+    await generateReadme(projectPath, projectName);
+    // Generate .gitignore
+    await generateGitignore(projectPath);
+    // Generate .vscode/settings.json
+    await generateVSCodeSettings(projectPath);
+}
+/**
+ * Generate README.md for the project
+ */
+async function generateReadme(projectPath, projectName) {
+    const readme = `# ${projectName}
+
+> Generated by [forge-sdd-toolkit](https://github.com/4youtest-vsalmeida/forge-sdd-toolkit)
+
+## What is this?
+
+This project follows **Specification-Driven Development (SDD)** methodology, where you describe WHAT you want to build in natural language, and GitHub Copilot orchestrates the entire Forge app lifecycle.
+
+## Project Structure
+
+\`\`\`
+${projectName}/
+├── .github/prompts/          # GitHub Copilot prompts (use @forge-ideate, etc.)
+│   ├── forge-ideate.prompt.md
+│   ├── forge-architect.prompt.md
+│   ├── forge-plan.prompt.md
+│   ├── forge-implement.prompt.md
+│   ├── forge-test.prompt.md
+│   ├── forge-operate.prompt.md
+│   └── _base/               # Base prompts (referenced by stage prompts)
+│       ├── system-prompt.md
+│       └── decision-framework.md
+│
+├── .forge-sdd/              # SDD toolkit cache
+│   ├── templates/           # Reusable patterns
+│   └── schemas/             # Validation schemas
+│
+└── docs/                    # Your SDD documents (generated by Copilot)
+    ├── specification-document.md
+    ├── ADD.md
+    └── implementation-plan.md
+\`\`\`
+
+## The 6-Stage SDD Lifecycle
+
+### 1. IDEATE → Specification
+\`\`\`bash
+# In GitHub Copilot Chat
+@forge-ideate
+
+I want to build a Jira app that shows GitHub PR status in issue panels
+\`\`\`
+
+**Output**: \`docs/specification-document.md\`
+
+### 2. ARCHITECT → Architecture Decisions
+\`\`\`bash
+@forge-architect
+
+[Copilot reads specification and makes technical decisions]
+\`\`\`
+
+**Output**: \`docs/ADD.md\` (Architecture Decision Document)
+
+### 3. PLAN → Implementation Plan
+\`\`\`bash
+@forge-plan
+
+[Copilot breaks down architecture into tasks]
+\`\`\`
+
+**Output**: \`docs/implementation-plan.md\`
+
+### 4. IMPLEMENT → Working Code
+\`\`\`bash
+@forge-implement
+
+[Copilot generates production-ready code]
+\`\`\`
+
+**Output**: Source code, \`manifest.yml\`, \`package.json\`
+
+### 5. TEST → Test Suite
+\`\`\`bash
+@forge-test
+
+[Copilot generates comprehensive tests]
+\`\`\`
+
+**Output**: Test files
+
+### 6. OPERATE → Deployment
+\`\`\`bash
+@forge-operate
+
+[Copilot sets up CI/CD and monitoring]
+\`\`\`
+
+**Output**: Deployment configs
+
+## CLI Commands
+
+### Show Stage Prompt
+\`\`\`bash
+forge-sdd prompt ideate       # Display IDEATE prompt
+forge-sdd prompt architect    # Display ARCHITECT prompt
+forge-sdd prompt implement    # Display IMPLEMENT prompt
+\`\`\`
+
+### Copy Template
+\`\`\`bash
+forge-sdd template specification     # Copy specification template to docs/
+forge-sdd template ADD              # Copy ADD template to docs/
+\`\`\`
+
+### Validate Document
+\`\`\`bash
+forge-sdd validate docs/specification-document.md
+forge-sdd validate docs/ADD.md
+\`\`\`
+
+### Update Toolkit
+\`\`\`bash
+forge-sdd update                    # Update prompts/templates/schemas
+\`\`\`
+
+## Quick Start
+
+1. **Open VS Code** with this project
+2. **Open GitHub Copilot Chat** (Cmd/Ctrl + I)
+3. **Type** \`@forge-ideate\`
+4. **Describe** your app idea in natural language
+5. **Follow** the prompts through all 6 stages
+
+## Learn More
+
+- [SDD Methodology](https://github.com/4youtest-vsalmeida/forge-sdd-toolkit#readme)
+- [Forge Platform Docs](https://developer.atlassian.com/platform/forge/)
+- [GitHub Copilot](https://github.com/features/copilot)
+
+---
+
+**Built with ❤️ using SDD**
+`;
+    await fs.writeFile(path.join(projectPath, 'README.md'), readme, 'utf-8');
+}
+/**
+ * Generate .gitignore
+ */
+async function generateGitignore(projectPath) {
+    const gitignore = `# SDD temporary files
+*.draft.md
 *.tmp.md
+*.wip.md
 
 # Node modules
 node_modules/
@@ -88,26 +375,42 @@ node_modules/
 # Forge
 .forge/
 .tunnel/
+build/
+dist/
 
 # OS
 .DS_Store
 Thumbs.db
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
 `;
-        await fs.writeFile(path.join(projectPath, '.gitignore'), gitignoreContent);
-        spinner.succeed(chalk.green('Project initialized successfully!'));
-        // Display next steps
-        console.log(chalk.blue('\n📋 Next Steps:\n'));
-        console.log(chalk.gray(`  1. cd ${name}`));
-        console.log(chalk.gray('  2. Open the project in VS Code with GitHub Copilot'));
-        console.log(chalk.gray('  3. Run: forge-sdd prompt ideate'));
-        console.log(chalk.gray('  4. Follow the 6-stage SDD lifecycle\n'));
-        console.log(chalk.yellow('📖 Read README.md for detailed instructions\n'));
-    }
-    catch (error) {
-        console.error(chalk.red('\n❌ Error initializing project:\n'));
-        console.error(chalk.red(error instanceof Error ? error.message : String(error)));
-        process.exit(1);
-    }
+    await fs.writeFile(path.join(projectPath, '.gitignore'), gitignore, 'utf-8');
+}
+/**
+ * Generate .vscode/settings.json
+ */
+async function generateVSCodeSettings(projectPath) {
+    const settings = {
+        "github.copilot.enable": {
+            "*": true,
+            "yaml": true,
+            "markdown": true,
+            "plaintext": false
+        },
+        "github.copilot.advanced": {},
+        "files.associations": {
+            "*.prompt.md": "markdown"
+        },
+        "markdown.validate.enabled": true
+    };
+    await writeJSON(path.join(projectPath, '.vscode/settings.json'), settings);
 }
 // ============================================================================
 // COMMAND: prompt
@@ -136,7 +439,6 @@ async function promptCommand(stage, options) {
         console.log(chalk.yellow('\n💡 Tip: Copy this prompt and use it with GitHub Copilot in your editor\n'));
         if (options.copy) {
             // Attempt to copy to clipboard (platform-specific)
-            const { execSync } = require('child_process');
             try {
                 if (process.platform === 'darwin') {
                     execSync('pbcopy', { input: promptContent });
@@ -264,140 +566,6 @@ async function templateCommand(type, options) {
         console.error(chalk.red(error instanceof Error ? error.message : String(error)));
         process.exit(1);
     }
-}
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
-async function copyDirectory(src, dest) {
-    await fs.mkdir(dest, { recursive: true });
-    const entries = await fs.readdir(src, { withFileTypes: true });
-    for (const entry of entries) {
-        const srcPath = path.join(src, entry.name);
-        const destPath = path.join(dest, entry.name);
-        if (entry.isDirectory()) {
-            await copyDirectory(srcPath, destPath);
-        }
-        else {
-            await fs.copyFile(srcPath, destPath);
-        }
-    }
-}
-function generateProjectReadme(projectName, template) {
-    return `# ${projectName}
-
-> Specification-Driven Development project for Atlassian Forge
-
-## 🎯 SDD Methodology
-
-This project follows the **6-stage SDD lifecycle**:
-
-\`\`\`
-IDEATE → ARCHITECT → PLAN → IMPLEMENT → TEST → OPERATE
-\`\`\`
-
-Each stage produces a formal document that feeds into the next stage.
-
-## 🚀 Getting Started
-
-### Stage 1: IDEATE
-
-Create your specification document:
-
-\`\`\`bash
-# Display the IDEATE prompt
-forge-sdd prompt ideate
-
-# Copy the template
-forge-sdd template specification
-
-# Use GitHub Copilot to fill in docs/specification-[date].md
-\`\`\`
-
-### Stage 2: ARCHITECT
-
-Make technical decisions:
-
-\`\`\`bash
-# Display the ARCHITECT prompt
-forge-sdd prompt architect
-
-# Copy the template
-forge-sdd template ADD
-
-# Use GitHub Copilot with your specification
-\`\`\`
-
-### Stage 3: PLAN
-
-Create implementation backlog:
-
-\`\`\`bash
-forge-sdd prompt plan
-forge-sdd template implementation-plan
-\`\`\`
-
-### Stage 4: IMPLEMENT
-
-Generate code:
-
-\`\`\`bash
-forge-sdd prompt implement
-# Use Copilot to generate code based on your plan
-\`\`\`
-
-### Stage 5: TEST
-
-Create test suite:
-
-\`\`\`bash
-forge-sdd prompt test
-forge-sdd template test-plan
-\`\`\`
-
-### Stage 6: OPERATE
-
-Deploy and operate:
-
-\`\`\`bash
-forge-sdd prompt operate
-\`\`\`
-
-## 📁 Project Structure
-
-\`\`\`
-${projectName}/
-├── .forge-sdd/          # SDD toolkit (prompts, templates, schemas)
-├── docs/                # SDD documents (spec, ADD, plans)
-├── src/                 # Forge app source code
-├── manifest.yml         # Forge app manifest
-└── README.md           # This file
-\`\`\`
-
-## ✅ Validation
-
-Validate your documents at any time:
-
-\`\`\`bash
-forge-sdd validate docs/specification-2025-10-05.md
-forge-sdd validate docs/ADD-2025-10-05.md --type ADD
-\`\`\`
-
-## 📖 Documentation
-
-- **Prompts**: \`.forge-sdd/prompts/commands/\`
-- **Templates**: \`.forge-sdd/templates/general/documents/\`
-- **Schemas**: \`.forge-sdd/schemas/\`
-
-## 🔗 Resources
-
-- [SDD Methodology](https://github.com/your-org/forge-sdd-toolkit)
-- [Atlassian Forge Docs](https://developer.atlassian.com/platform/forge/)
-- [GitHub Copilot](https://github.com/features/copilot)
-
----
-
-**Generated by forge-sdd v0.1.0**
-`;
 }
 // ============================================================================
 // PARSE AND RUN
