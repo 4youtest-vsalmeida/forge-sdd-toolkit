@@ -313,18 +313,28 @@ Awaiting user confirmation...
 
 **Template Mapping**:
 
-| Module + UI | Template Command | Why |
-|-------------|-----------------|-----|
-| Issue Panel + UI Kit | `forge create --template jira-issue-panel` | Simple panels |
-| Issue Panel + Custom UI | `forge create --template jira-issue-panel-ui-kit-custom-ui` | Rich interactions |
-| Dashboard Gadget | `forge create --template jira-dashboard-gadget` | Standard widget |
-| Custom Field | `forge create --template jira-custom-field` | Field definition |
-| Confluence Macro | `forge create --template confluence-hello-world` | Content embed |
-| Global Page | `forge create --template jira-global-page` | Admin UI |
+| Module + UI | Template Name | Command |
+|-------------|---------------|---------|
+| Issue Panel + UI Kit | `jira-issue-panel-ui-kit` | `forge create -t jira-issue-panel-ui-kit my-app` |
+| Issue Panel + Custom UI | `jira-issue-panel-custom-ui` | `forge create -t jira-issue-panel-custom-ui my-app` |
+| Dashboard Gadget + UI Kit | `jira-dashboard-gadget-ui-kit` | `forge create -t jira-dashboard-gadget-ui-kit my-app` |
+| Dashboard Gadget + Custom UI | `jira-dashboard-gadget-custom-ui` | `forge create -t jira-dashboard-gadget-custom-ui my-app` |
+| Custom Field + UI Kit | `jira-custom-field-ui-kit` | `forge create -t jira-custom-field-ui-kit my-app` |
+| Custom Field + Custom UI | `jira-custom-field-custom-ui` | `forge create -t jira-custom-field-custom-ui my-app` |
+| Confluence Macro + UI Kit | `confluence-macro-ui-kit` | `forge create -t confluence-macro-ui-kit my-app` |
+| Confluence Macro + Custom UI | `confluence-macro-custom-ui` | `forge create -t confluence-macro-custom-ui my-app` |
+| Global Page + UI Kit | `jira-global-page-ui-kit` | `forge create -t jira-global-page-ui-kit my-app` |
+| Global Page + Custom UI | `jira-global-page-custom-ui` | `forge create -t jira-global-page-custom-ui my-app` |
+| Project Page + UI Kit | `jira-project-page-ui-kit` | `forge create -t jira-project-page-ui-kit my-app` |
+| Project Page + Custom UI | `jira-project-page-custom-ui` | `forge create -t jira-project-page-custom-ui my-app` |
+
+**Template Naming Pattern**: `<product>-<module>-<ui-variant>`
+- Always use `-ui-kit` OR `-custom-ui` suffix
+- Example: `jira-issue-panel-custom-ui` NOT `jira-issue-panel`
 
 **Implementation Command**:
 ```bash
-forge create --template [chosen-template] [app-name-from-spec]
+forge create -t [chosen-template] [app-name-from-spec]
 ```
 
 **Rationale**: 

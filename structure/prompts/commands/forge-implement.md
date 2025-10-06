@@ -58,37 +58,152 @@ If YES: Proceed with implementation.
 
 ## Step 1: Setup Project Structure
 
-**CRITICAL**: Always use official Forge templates with `forge create`. Never create structure manually.
+**CRITICAL**: Always use official Forge templates with `forge create -t <template-name> <app-name>`. Never create structure manually.
 
 ### 1.1 Choose Correct Template
 
-Based on ADD Decision #2 (UI approach), select the appropriate template:
+Based on ADD Decisions #1 (Module) and #2 (UI approach), select the appropriate template.
 
-| ADD Decision | Forge Template | Command |
-|--------------|----------------|---------|
-| UI Kit only | `jira-issue-panel` | `forge create --template jira-issue-panel my-app` |
-| Custom UI (React) | `jira-issue-panel-ui-kit-custom-ui` | `forge create --template jira-issue-panel-ui-kit-custom-ui my-app` |
-| Dashboard Gadget | `jira-dashboard-gadget` | `forge create --template jira-dashboard-gadget my-app` |
-| Confluence Macro | `confluence-hello-world` | `forge create --template confluence-hello-world my-app` |
-| Custom Field | `jira-custom-field` | `forge create --template jira-custom-field my-app` |
-| Workflow Function | See Forge docs | `forge create` (interactive) |
+**Template Selection Rules**:
+1. Always use `-t` or `--template` flag
+2. Most templates have `-ui-kit` or `-custom-ui` variants
+3. Never use an empty template
+4. Match template to module type from ADD Decision #1
 
-**Complete list of templates**: Run `forge create --help` or see [Forge Templates Docs](https://developer.atlassian.com/platform/forge/cli-reference/create/)
+#### Most Common Templates (Quick Reference)
+
+| Module Type | UI Approach | Template Name |
+|-------------|-------------|---------------|
+| **Jira Issue Panel** | UI Kit | `jira-issue-panel-ui-kit` |
+| **Jira Issue Panel** | Custom UI | `jira-issue-panel-custom-ui` |
+| **Jira Dashboard Gadget** | UI Kit | `jira-dashboard-gadget-ui-kit` |
+| **Jira Dashboard Gadget** | Custom UI | `jira-dashboard-gadget-custom-ui` |
+| **Jira Global Page** | UI Kit | `jira-global-page-ui-kit` |
+| **Jira Global Page** | Custom UI | `jira-global-page-custom-ui` |
+| **Jira Project Page** | UI Kit | `jira-project-page-ui-kit` |
+| **Jira Project Page** | Custom UI | `jira-project-page-custom-ui` |
+| **Jira Custom Field** | UI Kit | `jira-custom-field-ui-kit` |
+| **Jira Custom Field** | Custom UI | `jira-custom-field-custom-ui` |
+| **Confluence Macro** | UI Kit | `confluence-macro-ui-kit` |
+| **Confluence Macro** | Custom UI | `confluence-macro-custom-ui` |
+| **Confluence Space Page** | UI Kit | `confluence-space-page-ui-kit` |
+| **Confluence Space Page** | Custom UI | `confluence-space-page-custom-ui` |
+
+#### Complete Template List (By Product)
+
+<details>
+<summary><strong>Jira Templates</strong> (click to expand)</summary>
+
+- `jira-admin-page-ui-kit` / `jira-admin-page-custom-ui`
+- `jira-backlog-action-ui-kit` / `jira-backlog-action-custom-ui`
+- `jira-board-action-ui-kit` / `jira-board-action-custom-ui`
+- `jira-command-ui-kit` / `jira-command-custom-ui`
+- `jira-custom-field-type-ui-kit` / `jira-custom-field-type-custom-ui`
+- `jira-custom-field-ui-kit` / `jira-custom-field-custom-ui`
+- `jira-dashboard-background-script-ui-kit` / `jira-dashboard-background-script-custom-ui`
+- `jira-dashboard-gadget-ui-kit` / `jira-dashboard-gadget-custom-ui`
+- `jira-entity-property`
+- `jira-global-page-ui-kit` / `jira-global-page-custom-ui`
+- `jira-global-permission`
+- `jira-issue-action-ui-kit` / `jira-issue-action-custom-ui`
+- `jira-issue-activity-ui-kit` / `jira-issue-activity-custom-ui`
+- `jira-issue-context-ui-kit` / `jira-issue-context-custom-ui`
+- `jira-issue-glance-ui-kit` / `jira-issue-glance-custom-ui`
+- `jira-issue-navigator-action-ui-kit` / `jira-issue-navigator-action-custom-ui`
+- `jira-issue-panel-ui-kit` / `jira-issue-panel-custom-ui`
+- `jira-issue-view-background-script-ui-kit` / `jira-issue-view-background-script-custom-ui`
+- `jira-jql-function`
+- `jira-personal-settings-page-ui-kit` / `jira-personal-settings-page-custom-ui`
+- `jira-project-page-ui-kit` / `jira-project-page-custom-ui`
+- `jira-project-permission`
+- `jira-project-settings-page-ui-kit` / `jira-project-settings-page-custom-ui`
+- `jira-sprint-action-ui-kit` / `jira-sprint-action-custom-ui`
+- `jira-time-tracking-provider`
+- `jira-workflow-condition`
+- `jira-workflow-postfunction`
+- `jira-workflow-validator`
+
+</details>
+
+<details>
+<summary><strong>Jira Service Management Templates</strong> (click to expand)</summary>
+
+- `jira-service-management-assets-import-type-ui-kit` / `jira-service-management-assets-import-type-custom-ui`
+- `jira-service-management-organization-panel-ui-kit` / `jira-service-management-organization-panel-custom-ui`
+- `jira-service-management-portal-footer-ui-kit` / `jira-service-management-portal-footer-custom-ui`
+- `jira-service-management-portal-header-ui-kit` / `jira-service-management-portal-header-custom-ui`
+- `jira-service-management-portal-profile-panel-ui-kit` / `jira-service-management-portal-profile-panel-custom-ui`
+- `jira-service-management-portal-request-create-property-panel-ui-kit` / `jira-service-management-portal-request-create-property-panel-custom-ui`
+- `jira-service-management-portal-request-detail-panel-ui-kit` / `jira-service-management-portal-request-detail-panel-custom-ui`
+- `jira-service-management-portal-request-detail-ui-kit` / `jira-service-management-portal-request-detail-custom-ui`
+- `jira-service-management-portal-request-view-action-ui-kit` / `jira-service-management-portal-request-view-action-custom-ui`
+- `jira-service-management-portal-subheader-ui-kit` / `jira-service-management-portal-subheader-custom-ui`
+- `jira-service-management-portal-user-menu-action-ui-kit` / `jira-service-management-portal-user-menu-action-custom-ui`
+- `jira-service-management-queue-page-ui-kit` / `jira-service-management-queue-page-custom-ui`
+
+</details>
+
+<details>
+<summary><strong>Confluence Templates</strong> (click to expand)</summary>
+
+- `confluence-content-action-ui-kit` / `confluence-content-action-custom-ui`
+- `confluence-content-byline-ui-kit` / `confluence-content-byline-custom-ui`
+- `confluence-context-menu-ui-kit` / `confluence-context-menu-custom-ui`
+- `confluence-global-page-ui-kit` / `confluence-global-page-custom-ui`
+- `confluence-global-settings-ui-kit` / `confluence-global-settings-custom-ui`
+- `confluence-homepage-feed-ui-kit` / `confluence-homepage-feed-custom-ui`
+- `confluence-macro-ui-kit` / `confluence-macro-custom-ui`
+- `confluence-macro-with-custom-configuration-ui-kit` / `confluence-macro-with-custom-configuration-custom-ui`
+- `confluence-space-page-ui-kit` / `confluence-space-page-custom-ui`
+- `confluence-space-settings-ui-kit` / `confluence-space-settings-custom-ui`
+
+</details>
+
+<details>
+<summary><strong>Other Templates</strong> (click to expand)</summary>
+
+- `action-rovo` - Rovo actions
+- `rovo-agent-rovo` - Rovo agents
+- `product-trigger` - Event triggers
+- `scheduled-trigger` - Scheduled jobs
+- `webtrigger` - Webhooks
+
+</details>
+
+**Documentation**: [Forge Templates Reference](https://developer.atlassian.com/platform/forge/cli-reference/create/)
 
 ### 1.2 Create Project from Template
 
+**Always use the `-t` flag with a specific template name**:
+
 ```bash
-# Example for Jira Issue Panel with Custom UI (most common)
-forge create -t jira-issue-panel-ui-kit-custom-ui my-forge-app
+# Example 1: Jira Issue Panel with Custom UI
+forge create -t jira-issue-panel-custom-ui tap-bird-challenge
 
-# Or interactive mode (recommended for first time)
-forge create
+# Example 2: Jira Global Page with Custom UI
+forge create -t jira-global-page-custom-ui my-admin-app
 
-# Follow prompts:
-# 1. Select template matching ADD Decision #2
-# 2. Enter app name from specification
-# 3. Wait for initialization
+# Example 3: Confluence Macro with UI Kit
+forge create -t confluence-macro-ui-kit my-content-macro
+
+# Example 4: Dashboard Gadget with Custom UI
+forge create -t jira-dashboard-gadget-custom-ui my-dashboard-widget
 ```
+
+**Interactive mode (for exploration only)**:
+```bash
+forge create
+# Follow prompts to select template
+# ⚠️ Still requires selecting from template list
+```
+
+**Key Points**:
+- ✅ Always specify `-t <template-name>`
+- ✅ Template name must match ADD Decision #1 (module) and #2 (UI approach)
+- ✅ Use `-ui-kit` suffix for UI Kit approach
+- ✅ Use `-custom-ui` suffix for Custom UI approach
+- ❌ Never use `forge create` without template in production
+- ❌ Never create directory structure manually
 
 ### 1.3 Customize Generated Files
 
