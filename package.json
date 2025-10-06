@@ -16,6 +16,14 @@
   "bin": {
     "forge-sdd": "./dist/structure/scripts/cli/forge-sdd.js"
   },
+  "files": [
+    "dist/",
+    "structure/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "INSTALL.md"
+  ],
   "keywords": [
     "atlassian",
     "forge",
