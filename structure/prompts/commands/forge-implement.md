@@ -209,7 +209,133 @@ forge create
 
 The template creates the base structure. Now customize per ADD:
 
-**Update `manifest.yml`** with architecture decisions:
+#### A. Choose Language: TypeScript (Recommended)
+
+**RECOMMENDED**: Use TypeScript for better type safety and developer experience.
+
+```bash
+cd my-forge-app
+
+# If template created JS files, convert to TypeScript:
+# 1. Rename files: .js → .ts, .jsx → .tsx
+# 2. Add tsconfig.json (if not present)
+# 3. Install TypeScript dependencies
+npm install --save-dev typescript @types/node @types/react @types/react-dom
+
+# TypeScript configuration (tsconfig.json)
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "jsx": "react",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
+```
+
+**Why TypeScript?**
+- ✅ Type safety catches errors at compile time
+- ✅ Better IDE support (autocomplete, refactoring)
+- ✅ Self-documenting code
+- ✅ Easier maintenance and scaling
+- ✅ Forge APIs are typed
+
+#### B. Custom UI: Use Vite (Recommended for React)
+
+**If ADD chose Custom UI**, consider using Vite instead of Webpack:
+
+**Why Vite?**
+- ⚡ 10x faster hot reload
+- 📦 Smaller bundle sizes
+- 🔧 Better DX (developer experience)
+- 🎯 Optimized for modern browsers
+
+**Setup Vite for Custom UI**:
+
+```bash
+# Install Vite and dependencies
+npm install --save-dev vite @vitejs/plugin-react
+
+# Create vite.config.ts
+cat > vite.config.ts << 'EOF'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    outDir: 'static/my-app',  // CRITICAL: Must be static/<app-name>
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'src/frontend/index.html')
+      }
+    }
+  },
+  server: {
+    port: 3000
+  }
+});
+EOF
+
+# Update package.json scripts
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}
+```
+
+**CRITICAL: Custom UI Directory Structure**:
+
+```
+my-forge-app/
+├── manifest.yml
+├── src/
+│   ├── index.ts              # Backend resolvers
+│   └── frontend/             # Frontend source
+│       ├── index.html
+│       ├── index.tsx         # Entry point
+│       └── App.tsx
+└── static/
+    └── my-app/               # ⚠️ MUST match manifest resource key
+        ├── index.html        # Built by Vite
+        ├── assets/
+        └── ...
+```
+
+**Manifest configuration for Custom UI**:
+
+```yaml
+resources:
+  - key: my-app                    # ⚠️ Must match static/ directory name
+    path: static/my-app
+
+modules:
+  jira:issuePanel:
+    - key: my-panel
+      resource: my-app              # References resource key above
+      resolver:
+        function: resolver
+```
+
+**Common Mistakes to Avoid**:
+- ❌ Building to wrong directory (must be `static/<app-name>`)
+- ❌ Resource key mismatch between manifest and directory
+- ❌ Forgetting to run build before deploy
+- ❌ Using absolute paths in HTML (use relative)
+
+#### C. Update `manifest.yml` with Architecture Decisions
 
 ```yaml
 modules:
@@ -219,28 +345,43 @@ modules:
       function: main
       title: [Title from spec]
       icon: [appropriate icon]
-      # Template provides basic structure, customize as needed
+      # For Custom UI, add resource reference:
+      resource: [app-name]         # If using Custom UI
 
-# From ADD Decision #5
+# From ADD Decision #5 - Permissions
 permissions:
   scopes:
-    - read:jira-work  # REQ-F-001
-    - storage:app     # REQ-NFR-001 (caching)
+    - read:jira-work               # REQ-F-001
+    - storage:app                  # REQ-NFR-001 (caching)
   external:
     fetch:
       backend:
         - 'https://api.example.com/*'  # REQ-F-002
 
-# From ADD Decision #2
+# From ADD Decision #2 - Runtime
 app:
   runtime:
     name: nodejs18.x
+
+# If using Custom UI (from ADD Decision #2)
+resources:
+  - key: [app-name]                # ⚠️ Must match static/ directory
+    path: static/[app-name]
 ```
 
-**Install additional dependencies** per ADD:
+#### D. Install Additional Dependencies per ADD
 
 ```bash
 cd my-forge-app
+
+# TypeScript (recommended)
+npm install --save-dev typescript @types/node
+
+# If Custom UI with React + TypeScript
+npm install --save-dev @types/react @types/react-dom
+
+# If ADD specifies Vite (recommended for Custom UI)
+npm install --save-dev vite @vitejs/plugin-react
 
 # If ADD specifies charting library
 npm install chart.js
@@ -249,7 +390,22 @@ npm install chart.js
 npm install date-fns
 
 # If ADD specifies testing tools
-npm install --save-dev @forge/cli-tests jest
+npm install --save-dev @forge/cli-tests jest @types/jest ts-jest
+```
+
+#### E. Development Workflow
+
+```bash
+# For Custom UI with Vite:
+npm run dev          # Start Vite dev server (hot reload)
+forge tunnel         # In another terminal
+
+# Build before deploy:
+npm run build        # Builds to static/<app-name>/
+forge deploy         # Deploy to Forge
+
+# For UI Kit only:
+forge tunnel         # Handles everything
 ```
 
 ## Step 2: Implement Tasks with Traceability

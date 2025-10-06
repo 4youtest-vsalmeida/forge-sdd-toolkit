@@ -346,6 +346,153 @@ forge create -t [chosen-template] [app-name-from-spec]
 **Reference**: See `docs/best-practices/forge-project-setup.md` for complete guide
 ```
 
+### Step 3.6: Language and Tooling Selection
+
+```markdown
+## Architecture Decision: Language and Build Tools
+
+### Decision: Programming Language
+
+**Option A: TypeScript** ⭐ RECOMMENDED
+- **Type Safety**: Catch errors at compile time
+- **IDE Support**: Better autocomplete and refactoring
+- **Forge API Types**: Official type definitions available (`@forge/api`, `@forge/ui`)
+- **Maintainability**: Easier to understand and refactor
+- **Team Scalability**: Self-documenting code
+- **Trade-offs**: Requires compilation step, slight learning curve
+
+**Option B: JavaScript**
+- **Simplicity**: No compilation needed
+- **Faster Prototyping**: Quick iterations
+- **Trade-offs**: Runtime errors, less IDE support, harder maintenance
+
+**Recommendation**: Use TypeScript for all projects except:
+- Proof-of-concept demos (< 100 lines)
+- Single-file resolvers
+- Team has zero TypeScript experience AND tight deadline
+
+### Decision: Build Tool (Custom UI Only)
+
+**Option A: Vite** ⭐ RECOMMENDED for Custom UI
+- **Performance**: 10x faster Hot Module Replacement (HMR)
+- **Bundle Size**: 30-50% smaller bundles with better tree-shaking
+- **Developer Experience**: 
+  - Instant server start (vs 10-30s with Webpack)
+  - Sub-second HMR updates
+  - Better error messages
+- **Modern Defaults**: ESM, optimized for React/Vue/etc
+- **Configuration**: Simpler, less boilerplate
+- **Example**:
+```typescript
+// vite.config.ts
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    outDir: 'static/tap-bird-challenge',  // CRITICAL: matches manifest resource key
+    emptyOutDir: true,
+  },
+});
+```
+
+**Option B: Webpack**
+- **Maturity**: More plugins and community resources
+- **Complex Needs**: Advanced code splitting, custom loaders
+- **Trade-offs**: Slower builds, complex configuration
+
+**Recommendation**: Use Vite for Custom UI unless:
+- Existing Webpack configuration to maintain
+- Specific Webpack plugin required (rare)
+- Team expertise is Webpack-only
+
+### Decision: Directory Structure (Custom UI)
+
+**CRITICAL REQUIREMENT**: Custom UI must be built to `static/<app-name>/`
+
+**Correct Structure**:
+```
+my-forge-app/
+├── manifest.yml              # Resources key MUST match static directory
+├── src/
+│   ├── index.tsx            # Custom UI React app
+│   ├── resolvers/
+│   └── ...
+├── static/
+│   └── my-forge-app/        # ← Build output directory (matches manifest)
+│       ├── index.html
+│       ├── assets/
+│       └── ...
+├── vite.config.ts           # outDir: 'static/my-forge-app'
+└── package.json
+```
+
+**Manifest Configuration**:
+```yaml
+resources:
+  - key: my-forge-app        # MUST match static directory name
+    path: static/my-forge-app
+
+modules:
+  jira:globalPage:
+    - key: my-global-page
+      resource: my-forge-app # References the resource key
+      title: My App
+```
+
+**Common Mistakes**:
+- ❌ Building to `dist/` or `build/` → Deployment fails
+- ❌ Mismatched resource key and directory name → Module won't load
+- ❌ Missing `static/` prefix → 404 errors
+- ✅ Correct: `static/<app-name>/` with matching manifest resource key
+
+**Validation Checklist**:
+- [ ] Vite/Webpack `outDir` = `static/<app-name>`
+- [ ] Manifest `resources[0].path` = `static/<app-name>`
+- [ ] Manifest `resources[0].key` = `<app-name>`
+- [ ] Module `resource` field references correct key
+- [ ] Directory exists before first build
+
+### Decision Summary
+
+Document your selections:
+
+```markdown
+## Technology Stack
+
+**Language**: [TypeScript | JavaScript]
+**Rationale**: [Type safety needs | Simplicity | Team expertise]
+
+**Build Tool** (if Custom UI): [Vite | Webpack | None]
+**Rationale**: [Development speed | Bundle optimization | Legacy requirements]
+
+**Directory Structure** (if Custom UI):
+- Build output: `static/<APP-NAME>`
+- Resource key: `<APP-NAME>`
+- Validation: ✅ Paths match manifest
+
+**Dependencies**:
+```json
+{
+  "devDependencies": {
+    "typescript": "^5.0.0",      // If TypeScript selected
+    "@types/react": "^18.0.0",   // If React + TypeScript
+    "vite": "^5.0.0",            // If Vite selected
+    "@vitejs/plugin-react": "^4.0.0"
+  }
+}
+```
+
+**Build Commands**:
+- Dev: `npm run dev` (Vite) + `forge tunnel`
+- Build: `npm run build` (outputs to static/<app-name>/)
+- Deploy: `forge deploy` (after successful build)
+
+**Reference**: See forge-implement.md Section 1.3 for complete setup instructions
+```
+```
+
 ## Step 4: Design Data Architecture
 
 ```markdown
