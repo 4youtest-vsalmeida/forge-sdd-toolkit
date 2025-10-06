@@ -14,9 +14,10 @@
     "prepublishOnly": "npm run build"
   },
   "bin": {
-    "forge-sdd": "./dist/structure/scripts/cli/forge-sdd.js"
+    "forge-sdd": "./bin/forge-sdd.js"
   },
   "files": [
+    "bin/",
     "dist/",
     "structure/",
     "README.md",

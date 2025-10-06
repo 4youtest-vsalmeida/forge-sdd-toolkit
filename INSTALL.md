@@ -1,158 +1,608 @@
-# Guia de Instalação - forge-sdd-toolkit
+# forge-sdd-toolkit Installation Guide# forge-sdd-toolkit Installation Guide# Guia de Instalação - forge-sdd-toolkit
 
-## Instalação via GitHub (Para Testes)
 
-### Método 1: Instalação Global
 
-```bash
-npm install -g git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
-```
+## Recommended: Install via uv ⚡
 
-Após a instalação, você pode usar o comando `forge-sdd` globalmente:
 
-```bash
-forge-sdd init my-forge-app
-forge-sdd prompt ideate
-forge-sdd validate docs/specification.md
-forge-sdd template implementation-plan
-```
 
-### Método 2: Uso com npx (Sem Instalação Global)
+### Why uv?## Recommended: Install via uv ⚡## Instalação via GitHub (Para Testes)
 
-```bash
-npx git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git init my-forge-app
-```
+- **10-100x faster** than pip
 
-### Método 3: Instalação Local no Projeto
+- **Better dependency resolution**
 
-```bash
-npm install git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
-```
+- **No virtual environment needed** for CLI tools
 
-Depois use via npm scripts ou npx local:
+- **Single binary** - lightweight and portable### Why uv?### Método 1: Instalação Global
 
-```bash
-npx forge-sdd init my-forge-app
-```
 
-## Verificação da Instalação
 
-Para verificar se a instalação foi bem-sucedida:
+### Installation- **10-100x faster** than pip
 
-```bash
+
+
+```bash- **Better dependency resolution**```bash
+
+# Install uv if you don't have it
+
+curl -LsSf https://astral.sh/uv/install.sh | sh- **No virtual environment needed** for CLI toolsnpm install -g git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
+
+
+
+# Option A: Install from GitHub- **Single binary** - lightweight and portable```
+
+uv tool install git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit
+
+
+
+# Option B: Install from local directory (for development)
+
+cd forge-sdd-toolkit### InstallationApós a instalação, você pode usar o comando `forge-sdd` globalmente:
+
+uv tool install --editable .
+
+
+
+# Verify installation
+
+forge-sdd --help```bash```bash
+
 forge-sdd --version
-# Deve exibir: 0.1.0
+
+```# Install uv if you don't have itforge-sdd init my-forge-app
+
+
+
+**What is `--editable` mode?**curl -LsSf https://astral.sh/uv/install.sh | shforge-sdd prompt ideate
+
+- Changes in the source code are reflected immediately
+
+- Perfect for development and contributionsforge-sdd validate docs/specification.md
+
+- No need to reinstall after each change
+
+- Similar to `npm link` or `pip install -e`# Install forge-sdd-toolkit directly from GitHubforge-sdd template implementation-plan
+
+
+
+### Usageuv tool install git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit```
+
+
+
+```bash
+
+# Create a new SDD project
+
+forge-sdd init my-forge-app# Verify installation### Método 2: Uso com npx (Sem Instalação Global)
+
+
+
+# Navigate and openforge-sdd init --help
+
+cd my-forge-app
+
+code .``````bash
+
+
+
+# Get installation help anytimenpx git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git init my-forge-app
+
+forge-sdd install
+
+### Usage```
+
+# Start with GitHub Copilot
+
+# Open Copilot Chat and type: @forge-ideate
+
+```
+
+```bash### Método 3: Instalação Local no Projeto
+
+---
+
+# Create a new SDD project
+
+## Alternative: Install via pip
+
+forge-sdd init my-forge-app```bash
+
+```bash
+
+# Option A: Install from GitHubnpm install git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
+
+pip install git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit
+
+# Navigate and open```
+
+# Option B: Install from local directory (for development)
+
+cd forge-sdd-toolkitcd my-forge-app
+
+pip install --editable .
+
+code .Depois use via npm scripts ou npx local:
+
+# Verify
 
 forge-sdd --help
-# Deve exibir os 4 comandos disponíveis
+
 ```
 
-## Passos para Publicação no GitHub
+# Start with GitHub Copilot```bash
 
-### 1. Build do Projeto
+---
+
+# Open Copilot Chat and type: @forge-ideatenpx forge-sdd init my-forge-app
+
+## Alternative: Install Script (Legacy)
+
+``````
 
 ```bash
-npm run build
+
+curl -fsSL https://raw.githubusercontent.com/4youtest-vsalmeida/forge-sdd-toolkit/main/install.sh | bash
+
 ```
 
-Este comando compila o TypeScript para JavaScript na pasta `dist/`.
+---## Verificação da Instalação
 
-### 2. Commit dos Arquivos de Build
+---
+
+
+
+## For Developers: Local Development
+
+## Alternative: Install via pipPara verificar se a instalação foi bem-sucedida:
+
+### Clone and Install in Editable Mode
+
+
 
 ```bash
-git add dist/
-git add package.json .gitignore INSTALL.md
-git commit -m "chore: prepare for GitHub installation - include dist/ folder"
+
+# Clone the repository```bash```bash
+
+git clone https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
+
+cd forge-sdd-toolkit# Install directly from GitHubforge-sdd --version
+
+
+
+# Install in editable mode with uv (recommended)pip install git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit# Deve exibir: 0.1.0
+
+uv tool install --editable .
+
+
+
+# Or with pip
+
+pip install --editable .# Verifyforge-sdd --help
+
+
+
+# Test your changesforge-sdd init --help# Deve exibir os 4 comandos disponíveis
+
+forge-sdd init test-project
+
+cd test-project``````
+
+
+
+# Make changes to the toolkit code...
+
+# Changes are reflected immediately without reinstalling!
+
+```---## Passos para Publicação no GitHub
+
+
+
+### What is Editable Mode?
+
+
+
+When you install in editable mode (`--editable` or `-e`):## Alternative: Install Script (Legacy)### 1. Build do Projeto
+
+- The package is installed as a **symlink** to your source directory
+
+- Changes to `.py` files are **reflected immediately**
+
+- No need to reinstall after each modification
+
+- Perfect for:```bash```bash
+
+  - 🔧 Development and testing
+
+  - 🐛 Debuggingcurl -fsSL https://raw.githubusercontent.com/4youtest-vsalmeida/forge-sdd-toolkit/main/install.sh | bashnpm run build
+
+  - 🤝 Contributing to the project
+
+  - 📚 Learning how it works``````
+
+
+
+### Development Workflow
+
+
+
+```bash---Este comando compila o TypeScript para JavaScript na pasta `dist/`.
+
+# 1. Make changes to src/forge_sdd_toolkit/cli.py
+
+vim src/forge_sdd_toolkit/cli.py
+
+
+
+# 2. Test immediately (no reinstall needed!)## For Developers: Local Development### 2. Commit dos Arquivos de Build
+
+forge-sdd init test-app
+
+
+
+# 3. Commit when ready
+
+git add .```bash```bash
+
+git commit -m "Add new feature"
+
+```# Clone the repositorygit add dist/
+
+
+
+---git clone https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.gitgit add package.json .gitignore INSTALL.md
+
+
+
+## Updatingcd forge-sdd-toolkitgit commit -m "chore: prepare for GitHub installation - include dist/ folder"
+
+
+
+### With uv```
+
+```bash
+
+uv tool upgrade forge-sdd-toolkit# Install in development mode with uv
+
+
+
+# Or for editable installationsuv tool install --force --editable .### 3. Push para o Repositório
+
+cd forge-sdd-toolkit
+
+git pull origin main
+
+# Changes applied automatically!
+
+```# Or with pip```bash
+
+
+
+### With pippip install --editable .git push origin main
+
+```bash
+
+pip install --upgrade git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit```
+
+
+
+# Or for editable installations# Test
+
+cd forge-sdd-toolkit
+
+git pull origin mainforge-sdd init test-project### 4. Criar uma Release (Opcional mas Recomendado)
+
+# Changes applied automatically!
+
+``````
+
+
+
+---```bash
+
+
+
+## Uninstalling---git tag v0.1.0
+
+
+
+### With uvgit push origin v0.1.0
+
+```bash
+
+uv tool uninstall forge-sdd-toolkit## Updating```
+
 ```
 
-### 3. Push para o Repositório
 
-```bash
-git push origin main
+
+### With pip
+
+```bash### With uvOu crie via GitHub interface:
+
+pip uninstall forge-sdd-toolkit
+
+``````bash1. Acesse: https://github.com/4youtest-vsalmeida/forge-sdd-toolkit/releases
+
+
+
+---uv tool upgrade forge-sdd-toolkit2. Clique em "Create a new release"
+
+
+
+## Troubleshooting```3. Tag: `v0.1.0`
+
+
+
+### Command not found after installation4. Title: `v0.1.0 - Initial Release`
+
+
+
+Make sure `~/.local/bin` is in your PATH:### With pip5. Description: "Primeira versão estável do forge-sdd-toolkit"
+
+
+
+```bash```bash
+
+# For zsh (macOS default)
+
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrcpip install --upgrade git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit## Instalação de uma Release Específica
+
+source ~/.zshrc
+
 ```
 
-### 4. Criar uma Release (Opcional mas Recomendado)
+# For bash
 
-```bash
-git tag v0.1.0
-git push origin v0.1.0
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrcApós criar a release, você pode instalar versões específicas:
+
+source ~/.bashrc
+
+---
+
+# Verify
+
+echo $PATH | grep ".local/bin"```bash
+
+which forge-sdd
+
+```## Uninstallingnpm install -g git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git#v0.1.0
+
+
+
+### Permission denied```
+
+
+
+Make sure the script has execute permissions:### With uv
+
+
+
+```bash```bash## Testes de Instalação
+
+chmod +x ~/.local/bin/forge-sdd
+
+```uv tool uninstall forge-sdd-toolkit
+
+
+
+### Files not found after init```### Teste 1: Instalação Global
+
+
+
+This usually means the package wasn't installed correctly. Try:
+
+
+
+```bash### With pip```bash
+
+# Uninstall
+
+uv tool uninstall forge-sdd-toolkit```bash# Limpar instalação anterior (se houver)
+
+
+
+# Reinstall with forcepip uninstall forge-sdd-toolkitnpm uninstall -g forge-sdd-toolkit
+
+uv tool install --force git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit
+
 ```
 
-Ou crie via GitHub interface:
-1. Acesse: https://github.com/4youtest-vsalmeida/forge-sdd-toolkit/releases
-2. Clique em "Create a new release"
-3. Tag: `v0.1.0`
-4. Title: `v0.1.0 - Initial Release`
-5. Description: "Primeira versão estável do forge-sdd-toolkit"
+# Verify
 
-## Instalação de uma Release Específica
+forge-sdd --version# Instalar via GitHub
 
-Após criar a release, você pode instalar versões específicas:
-
-```bash
-npm install -g git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git#v0.1.0
 ```
 
-## Testes de Instalação
+---npm install -g git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
 
-### Teste 1: Instalação Global
+### Editable mode not working
+
+
+
+Make sure you're in the correct directory:
+
+## Troubleshooting# Verificar instalação
 
 ```bash
-# Limpar instalação anterior (se houver)
-npm uninstall -g forge-sdd-toolkit
 
-# Instalar via GitHub
-npm install -g git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
+cd forge-sdd-toolkitforge-sdd --version
 
-# Verificar instalação
-forge-sdd --version
-forge-sdd --help
+uv tool install --force --editable .
 
-# Testar comando init
+### Command not found after installationforge-sdd --help
+
+# Verify it's editable
+
+uv tool list | grep forge-sdd
+
+```
+
+Make sure `~/.local/bin` is in your PATH:# Testar comando init
+
+### Module not found errors
+
 mkdir test-project
-cd test-project
-forge-sdd init
+
+This usually happens when the `structure/` directory is not included. Check:
+
+```bashcd test-project
+
+```bash
+
+# Verify structure exists# For zsh (macOS default)forge-sdd init
+
+ls -la ~/.local/share/uv/tools/forge-sdd-toolkit/*/site-packages/forge_sdd_toolkit/structure
+
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc```
+
+# If not, reinstall
+
+uv tool install --force --reinstall git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkitsource ~/.zshrc
+
 ```
 
 ### Teste 2: Uso com npx
 
-```bash
-# Criar diretório de teste
-mkdir test-npx
-cd test-npx
+---
 
-# Usar diretamente com npx
-npx git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git init my-app
+# For bash
 
-# Verificar estrutura criada
-ls -la my-app/
-```
+## Installation Verification Checklist
 
-### Teste 3: Todos os Comandos
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc```bash
+
+After installation, verify everything works:
+
+source ~/.bashrc# Criar diretório de teste
 
 ```bash
-cd my-app
 
-# Comando prompt
-forge-sdd prompt ideate
+# 1. Check command is available```mkdir test-npx
 
-# Comando validate (precisa de um arquivo para validar)
-forge-sdd validate docs/specification.md
+which forge-sdd
 
-# Comando template
-forge-sdd template implementation-plan
-```
+# Should show: ~/.local/bin/forge-sddcd test-npx
 
-## Troubleshooting
 
-### Erro: "Cannot find module"
 
-**Causa**: A pasta `dist/` não foi incluída no repositório.
+# 2. Check version### Permission denied
 
-**Solução**:
-```bash
+forge-sdd --version
+
+# Should show: forge-sdd-toolkit version 0.2.0# Usar diretamente com npx
+
+
+
+# 3. Check helpMake sure the script has execute permissions:npx git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git init my-app
+
+forge-sdd --help
+
+# Should show: Usage instructions
+
+
+
+# 4. Test init```bash# Verificar estrutura criada
+
+cd /tmp
+
+forge-sdd init test-verifychmod +x ~/.local/bin/forge-sddls -la my-app/
+
+cd test-verify
+
+``````
+
+# 5. Verify structure
+
+ls -la .github/prompts/
+
+# Should show: forge-*.prompt.md files and _base/ directory
+
+### Files not found after init### Teste 3: Todos os Comandos
+
+# 6. Cleanup
+
+cd ..
+
+rm -rf test-verify
+
+```This usually means the package wasn't installed correctly. Try:```bash
+
+
+
+---cd my-app
+
+
+
+## Next Steps```bash
+
+
+
+After successful installation:# Uninstall# Comando prompt
+
+
+
+1. **Create your first project**:uv tool uninstall forge-sdd-toolkitforge-sdd prompt ideate
+
+   ```bash
+
+   forge-sdd init my-forge-app
+
+   cd my-forge-app
+
+   code .# Reinstall with force# Comando validate (precisa de um arquivo para validar)
+
+   ```
+
+uv tool install --force git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkitforge-sdd validate docs/specification.md
+
+2. **Start with GitHub Copilot**:
+
+   - Open GitHub Copilot Chat (Cmd/Ctrl + I)```
+
+   - Type: `@forge-ideate`
+
+   - Describe your Forge app idea# Comando template
+
+
+
+3. **Follow the SDD lifecycle**:---forge-sdd template implementation-plan
+
+   ```
+
+   IDEATE → ARCHITECT → PLAN → IMPLEMENT → TEST → OPERATE```
+
+   ```
+
+## Next Steps
+
+4. **Learn more**:
+
+   - Read the [README.md](README.md)## Troubleshooting
+
+   - Check the [SETUP.md](SETUP.md) for development
+
+   - Explore the `.github/prompts/` directory in your projectAfter installation:
+
+
+
+**Happy building! 🚀**### Erro: "Cannot find module"
+
+
+1. Run `forge-sdd init my-app`
+
+2. Open the project in VS Code**Causa**: A pasta `dist/` não foi incluída no repositório.
+
+3. Start GitHub Copilot Chat
+
+4. Type `@forge-ideate` and describe your Forge app idea**Solução**:
+
+5. Follow the 6-stage SDD lifecycle```bash
+
 npm run build
-git add dist/
+
+**Happy building! 🚀**git add dist/
+
 git commit -m "chore: add dist/ folder for GitHub installation"
 git push
 ```

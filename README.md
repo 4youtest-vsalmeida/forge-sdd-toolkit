@@ -1,204 +1,879 @@
-# forge-sdd-toolkit
+# forge-sdd-toolkit# forge-sdd-toolkit# forge-sdd-toolkit# forge-sdd-toolkit
 
-> **Specification-Driven Development Toolkit** para Atlassian Forge Apps
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
-[![Version](https://img.shields.io/badge/version-0.1.0-orange)](./CHANGELOG.md)
-[![Install](https://img.shields.io/badge/install-npm%20|%20git-red)](./INSTALL.md)
 
-Toolkit de **context engineering** que transforma a **ideação do usuário em linguagem natural** na **orquestração e execução automática** do ciclo de vida completo de apps **Atlassian Forge** — desde **especificação** até **operação** — tomando **decisões Forge-aware** de forma **autônoma**.
+> **Specification-Driven Development** toolkit that transforms **natural language ideas** into **fully orchestrated Atlassian Forge apps** through a **6-stage lifecycle**.
 
-```bash
-# Instalação rápida via GitHub
-npm install -g git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
 
-# Ou uso direto
-npx git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git init my-app
-```
 
----
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)> **Specification-Driven Development** toolkit that transforms **natural language ideas** into **fully orchestrated Atlassian Forge apps** through a **6-stage lifecycle**.
 
-## 🎯 O Problema
+[![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
 
-Desenvolver apps Atlassian Forge é complexo:
-- ❌ **Curva de aprendizado íngreme**: Módulos, APIs, limitações da plataforma
-- ❌ **Decisões arquiteturais difíceis**: UI Kit vs Custom UI? Qual módulo usar?
-- ❌ **Falta de rastreabilidade**: Código desconectado dos requisitos originais
-- ❌ **Processo inconsistente**: Desenvolvedores pulam etapas críticas
 
-## ✨ A Solução: SDD (Specification-Driven Development)
 
-O **forge-sdd-toolkit** implementa uma metodologia sistemática de **6 estágios obrigatórios**:
+## 🎯 What is SDD?
 
-```mermaid
-graph LR
-    I[🎯 IDEATE] -->|Specification| A[🏗️ ARCHITECT]
-    A -->|ADD| P[📋 PLAN]
-    P -->|Backlog| IM[💻 IMPLEMENT]
-    IM -->|Code| T[🧪 TEST]
-    T -->|Tests| O[🚀 OPERATE]
-    
-    style I fill:#e8f5e9
-    style A fill:#fff3cd
-    style P fill:#fce4ec
-    style IM fill:#e3f2fd
-    style T fill:#f3e5ff
-    style O fill:#ffe0b2
-```
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)> **Specification-Driven Development** toolkit that transforms **natural language ideas** into **fully orchestrated Atlassian Forge apps** through a **6-stage lifecycle**.> **Specification-Driven Development Toolkit** para Atlassian Forge Apps
 
-### De Ideia a App Deployado
+**Specification-Driven Development (SDD)** is a methodology where:
 
-```bash
-# Input: Linguagem natural
-"Preciso de um painel em Jira que mostre status de PRs do Bitbucket"
+1. **Specifications drive everything** - Code is generated from specs, never written manually[![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
 
-# Processo automático
-forge-ideate     # → Gera especificação formal
-forge-architect  # → Decide: jira:issuePanel + Custom UI + APIs necessárias
-forge-plan       # → Cria backlog com tarefas priorizadas
-forge-implement  # → Gera código TypeScript funcional
-forge-test       # → Cria suite de testes
-forge-operate    # → Prepara deployment
+2. **Natural language is the source of truth** - Users describe WHAT, not HOW
 
-# Output: App Forge pronto para produção
-```
+3. **Six lifecycle stages must be followed sequentially** - Never skip stages
 
----
+4. **Every decision traces back to requirements** - Full traceability
 
-## 🏗️ Arquitetura: 3 Níveis
+## 🎯 What is SDD?
 
-### Nível 1: **Prompts** (Orquestradores)
-Gerenciam o fluxo através dos 6 estágios do ciclo de vida.
+## 🔄 The 6-Stage Lifecycle
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
 ```
-structure/prompts/
-├── base/
-│   ├── system-prompt.md          # Instruções fundamentais
-│   └── decision-framework.md     # Matrizes de decisão
-└── commands/
-    ├── forge-ideate.md           # Ideia → Especificação
-    ├── forge-architect.md        # Especificação → ADD
-    ├── forge-plan.md             # ADD → Backlog
-    ├── forge-implement.md        # Backlog → Código
-    ├── forge-test.md             # Código → Testes
-    └── forge-operate.md          # Testes → Deployment
-```
 
-### Nível 2: **Templates** (Base de Conhecimento)
-Padrões reutilizáveis para módulos, documentos e código Forge.
+IDEATE → ARCHITECT → PLAN → IMPLEMENT → TEST → OPERATE**Specification-Driven Development (SDD)** is a methodology where:
 
 ```
-structure/templates/
-├── general/
-│   ├── documents/               # Specification, ADD, Plans
-│   ├── code/                    # Padrões de código
-│   ├── manifests/               # manifest.yml templates
-│   └── snippets/                # Code snippets comuns
-└── forge-modules/
-    ├── jira/                    # Padrões Jira-específicos
-    ├── confluence/              # Padrões Confluence
-    ├── bitbucket/               # Padrões Bitbucket
-    └── ...                      # Outros produtos
-```
 
-### Nível 3: **Specializations** (Expertise Ultra-Específica)
-Implementações completas para casos de uso reais.
+1. **Specifications drive everything** - Code is generated from specs, never written manually[![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 
-```
-structure/specializations/
-├── jira/
-│   ├── issue-panel/             # jira:issuePanel patterns
-│   ├── workflow-triggers/       # Automation triggers
-│   └── custom-fields/           # Custom field implementations
-├── confluence/
-│   └── macros/
-│       ├── static-macros/       # Static content macros
-│       └── dynamic-macros/      # Dynamic/interactive macros
-└── cross-product/
-    └── jira-confluence-sync/    # Multi-product integrations
-```
+1. **IDEATE** → Transform ideas into formal specifications
 
----
+2. **ARCHITECT** → Make all technical decisions (modules, UI, scopes)2. **Natural language is the source of truth** - Users describe WHAT, not HOW
 
-## 🚀 Quick Start
+3. **PLAN** → Break down into tasks and backlog
 
-### Instalação
+4. **IMPLEMENT** → Generate working code3. **Six lifecycle stages must be followed sequentially** - Never skip stages[![Version](https://img.shields.io/badge/version-0.1.0-orange)](./CHANGELOG.md)
 
-#### Método 1: Instalação via GitHub (Recomendado para Testes)
+5. **TEST** → Create comprehensive test suites
 
-```bash
-# Instalação global
-npm install -g git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
+6. **OPERATE** → Setup deployment and monitoring4. **Every decision traces back to requirements** - Full traceability
 
-# Ou uso direto com npx (sem instalação)
-npx git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git init my-app
-```
 
-#### Método 2: Instalação via npm (Quando publicado)
 
-```bash
-# Instalação global
-npm install -g forge-sdd-toolkit
+## 🚀 Quick Start## 🎯 What is SDD?[![Install](https://img.shields.io/badge/install-npm%20|%20git-red)](./INSTALL.md)
 
-# Ou uso direto com npx
-npx forge-sdd-toolkit init my-app
-```
 
-#### Método 3: Clone e Build Local
 
-```bash
-# Clone o repositório
-git clone https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
+### Installation## 🔄 The 6-Stage Lifecycle
+
+
+
+#### Option 1: Using uv (Recommended - Fast! ⚡)
+
+
+
+```bash```
+
+# Install from GitHub
+
+uv tool install git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkitIDEATE → ARCHITECT → PLAN → IMPLEMENT → TEST → OPERATE**Specification-Driven Development (SDD)** is a methodology where:Toolkit de **context engineering** que transforma a **ideação do usuário em linguagem natural** na **orquestração e execução automática** do ciclo de vida completo de apps **Atlassian Forge** — desde **especificação** até **operação** — tomando **decisões Forge-aware** de forma **autônoma**.
+
+
+
+# Or install from local directory (for development/contribution)```
+
 cd forge-sdd-toolkit
 
-# Instale dependências e build
-npm install
-npm run build
+uv tool install --editable .1. **Specifications drive everything** - Code is generated from specs, never written manually
+
+
+
+# Verify1. **IDEATE** → Transform ideas into formal specifications
+
+forge-sdd --help
+
+```2. **ARCHITECT** → Make all technical decisions (modules, UI, scopes)2. **Natural language is the source of truth** - Users describe WHAT, not HOW```bash
+
+
+
+**Why uv?**3. **PLAN** → Break down into tasks and backlog
+
+- ⚡ 10-100x faster than pip
+
+- 🔒 Better dependency resolution4. **IMPLEMENT** → Generate working code3. **Six lifecycle stages must be followed sequentially** - Never skip stages# Instalação rápida via GitHub
+
+- 🎯 No virtualenv needed for tools
+
+- 📦 Single binary5. **TEST** → Create comprehensive test suites
+
+
+
+#### Option 2: Using pip6. **OPERATE** → Setup deployment and monitoring4. **Every decision traces back to requirements** - Full traceabilitynpm install -g git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
+
+
+
+```bash
+
+# Install from GitHub
+
+pip install git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit## 🚀 Quick Start
+
+
+
+# Or install from local directory (for development)
+
+cd forge-sdd-toolkit
+
+pip install --editable .### Installation## 🔄 The 6-Stage Lifecycle# Ou uso direto
+
+```
+
+
+
+#### Need help with installation?
+
+#### Option 1: Using uv (Recommended - Fast! ⚡)npx git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git init my-app
+
+```bash
+
+forge-sdd install  # Shows detailed installation guide
+
+```
+
+```bash``````
+
+### Usage
+
+# Install with uv directly from GitHub
+
+```bash
+
+# Initialize a new projectuv tool install git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkitIDEATE → ARCHITECT → PLAN → IMPLEMENT → TEST → OPERATE
+
+forge-sdd init my-forge-app
+
+
+
+# Navigate to project
+
+cd my-forge-app# Verify installation```---
+
+
+
+# Open in VS Codeforge-sdd --help
+
+code .
+
+``````
+
+
+
+### Start with GitHub Copilot
+
+
+
+1. Open GitHub Copilot Chat (Cmd/Ctrl + I)#### Option 2: Using pip1. **IDEATE** → Transform ideas into formal specifications## 🎯 O Problema
+
+2. Type: `@forge-ideate`
+
+3. Describe your Forge app idea:
+
+   ```
+
+   I want to build a Jira app that shows GitHub PR status in issue panels```bash2. **ARCHITECT** → Make all technical decisions (modules, UI, scopes)
+
+   ```
+
+4. Follow the prompts through each lifecycle stage# Install with pip directly from GitHub
+
+
+
+## 📋 Example Workflowpip install git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit3. **PLAN** → Break down into tasks and backlogDesenvolver apps Atlassian Forge é complexo:
+
+
+
+```bash
+
+# Stage 1: IDEATE - Transform idea into specification
+
+@forge-ideate# Verify installation4. **IMPLEMENT** → Generate working code- ❌ **Curva de aprendizado íngreme**: Módulos, APIs, limitações da plataforma
+
+I need an app that tracks technical debt in Confluence pages
+
+forge-sdd --help
+
+# Output: docs/specification-document.md
+
+``````5. **TEST** → Create comprehensive test suites- ❌ **Decisões arquiteturais difíceis**: UI Kit vs Custom UI? Qual módulo usar?
+
+
+
+```bash
+
+# Stage 2: ARCHITECT - Make technical decisions
+
+@forge-architect#### Option 3: Install Script (Legacy)6. **OPERATE** → Setup deployment and monitoring- ❌ **Falta de rastreabilidade**: Código desconectado dos requisitos originais
+
+
+
+# Output: docs/ADD.md (Architecture Decision Document)
+
+```
+
+```bash- ❌ **Processo inconsistente**: Desenvolvedores pulam etapas críticas
+
+```bash
+
+# Stage 3: PLAN - Create implementation plan# Quick install using the install script
+
+@forge-plan
+
+curl -fsSL https://raw.githubusercontent.com/4youtest-vsalmeida/forge-sdd-toolkit/main/install.sh | bash## 🚀 Quick Start
+
+# Output: docs/implementation-plan.md
+
+``````
+
+
+
+```bash## ✨ A Solução: SDD (Specification-Driven Development)
+
+# Stage 4: IMPLEMENT - Generate code
+
+@forge-implement### Usage
+
+
+
+# Output: src/, manifest.yml, package.json### Installation
+
+```
+
+```bash
+
+```bash
+
+# Stage 5: TEST - Create test suite# Initialize a new projectO **forge-sdd-toolkit** implementa uma metodologia sistemática de **6 estágios obrigatórios**:
+
+@forge-test
+
+forge-sdd init my-forge-app
+
+# Output: tests/
+
+``````bash
+
+
+
+```bash# Navigate to project
+
+# Stage 6: OPERATE - Setup deployment
+
+@forge-operatecd my-forge-app# Quick install```mermaid
+
+
+
+# Output: .github/workflows/, monitoring configs
+
+```
+
+# Open in VS Codecurl -fsSL https://raw.githubusercontent.com/4youtest-vsalmeida/forge-sdd-toolkit/main/install.sh | bashgraph LR
+
+## 🏗️ Architecture: 3-Level System
+
+code .
+
+### Level 1 - Prompts (Orchestrators)
+
+High-level orchestrators that manage the complete flow through the 6 stages.```    I[🎯 IDEATE] -->|Specification| A[🏗️ ARCHITECT]
+
+Located in `.github/prompts/*.prompt.md`
+
+
+
+### Level 2 - Templates (Knowledge Base)
+
+Structured knowledge base for Forge patterns, modules, and best practices.### Start with GitHub Copilot# Or manual install    A -->|ADD| P[📋 PLAN]
+
+Located in `.forge-sdd/templates/`
+
+
+
+### Level 3 - Specializations (Expert Implementations)
+
+Ultra-specific expertise for each Forge module use case.1. Open GitHub Copilot Chat (Cmd/Ctrl + I)git clone https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git ~/.forge-sdd-toolkit    P -->|Backlog| IM[💻 IMPLEMENT]
+
+Referenced from templates as needed.
+
+2. Type: `@forge-ideate`
+
+## 🎯 Why SDD for Forge?
+
+3. Describe your Forge app idea:chmod +x ~/.forge-sdd-toolkit/bin/forge-sdd    IM -->|Code| T[🧪 TEST]
+
+### Traditional Approach
+
+```   ```
+
+Developer → Reads docs → Writes code → Debugs → Fixes scopes → Redeploys
+
+```   I want to build a Jira app that shows GitHub PR status in issue panelsmkdir -p ~/.local/bin    T -->|Tests| O[🚀 OPERATE]
+
+
+
+### SDD Approach   ```
+
+```
+
+User → Describes idea → System generates:4. Follow the prompts through each lifecycle stageln -s ~/.forge-sdd-toolkit/bin/forge-sdd ~/.local/bin/forge-sdd    
+
+  ✓ Specification
+
+  ✓ Architecture decisions
+
+  ✓ Implementation plan
+
+  ✓ Working code## 📋 Example Workflow```    style I fill:#e8f5e9
+
+  ✓ Test suite
+
+  ✓ Deployment config
+
+```
+
+```bash    style A fill:#fff3cd
+
+## 🔑 Key Features
+
+# Stage 1: IDEATE - Transform idea into specification
+
+- **Forge-First Thinking**: Aware of platform limitations (25s timeout, Node.js sandbox)
+
+- **Smart Module Selection**: Chooses the right Forge module for your use case@forge-ideate### Usage    style P fill:#fce4ec
+
+- **UI Kit vs Custom UI**: Makes informed decisions based on requirements
+
+- **Scope Optimization**: Requests only minimum necessary permissionsI need an app that tracks technical debt in Confluence pages
+
+- **Full Traceability**: Every code line traces back to requirements
+
+- **Quality Gates**: Validation between each lifecycle stage    style IM fill:#e3f2fd
+
+
+
+## 🔧 For Contributors# Output: docs/specification-document.md
+
+
+
+### Development Installation``````bash    style T fill:#f3e5ff
+
+
+
+```bash
+
+# Clone the repository
+
+git clone https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git```bash# Initialize a new project    style O fill:#ffe0b2
+
+cd forge-sdd-toolkit
+
+# Stage 2: ARCHITECT - Make technical decisions
+
+# Install in editable mode with uv (changes reflect immediately)
+
+uv tool install --editable .@forge-architectforge-sdd init my-forge-app```
+
+
+
+# Or with pip
+
+pip install --editable .
+
+# Output: docs/ADD.md (Architecture Decision Document)
+
+# Test your changes
+
+forge-sdd init test-project```
+
+```
+
+# Navigate to project### De Ideia a App Deployado
+
+### Project Structure
+
+```bash
+
+```
+
+forge-sdd-toolkit/# Stage 3: PLAN - Create implementation plancd my-forge-app
+
+├── src/
+
+│   └── forge_sdd_toolkit/  # Python package@forge-plan
+
+│       ├── __init__.py
+
+│       └── cli.py          # CLI implementation```bash
+
+├── structure/
+
+│   ├── prompts/           # Stage orchestrators# Output: docs/implementation-plan.md
+
+│   │   ├── commands/      # forge-ideate.md, forge-architect.md, etc.
+
+│   │   └── base/          # system-prompt.md, decision-framework.md```# Open in VS Code# Input: Linguagem natural
+
+│   ├── templates/         # Knowledge base (60+ templates)
+
+│   └── schemas/           # Validation schemas
+
+├── pyproject.toml         # Python package config
+
+├── MANIFEST.in            # File inclusion rules```bashcode ."Preciso de um painel em Jira que mostre status de PRs do Bitbucket"
+
+└── .github/
+
+    ├── prompts/           # GitHub Copilot prompts# Stage 4: IMPLEMENT - Generate code
+
+    └── copilot-instructions.md
+
+```@forge-implement```
+
+
+
+## 📚 Documentation
+
+
+
+- [Installation Guide](INSTALL.md) - Detailed installation instructions# Output: src/, manifest.yml, package.json# Processo automático
+
+- [Setup Guide](SETUP.md) - Development setup and contribution guide
+
+- [SDD Methodology](.github/SDD_METHODOLOGY.md) *(coming soon)*```
+
+- [Lifecycle Stages](.github/LIFECYCLE_STAGES.md) *(coming soon)*
+
+### Start with GitHub Copilotforge-ideate     # → Gera especificação formal
+
+## 🎓 Learn More
+
+```bash
+
+- [Atlassian Forge Platform](https://developer.atlassian.com/platform/forge/)
+
+- [GitHub Copilot](https://github.com/features/copilot)# Stage 5: TEST - Create test suiteforge-architect  # → Decide: jira:issuePanel + Custom UI + APIs necessárias
+
+- [uv Package Manager](https://github.com/astral-sh/uv)
+
+- [SDD Methodology](https://github.com/4youtest-vsalmeida/forge-sdd-toolkit/wiki)@forge-test
+
+
+
+## 📝 License1. Open GitHub Copilot Chat (Cmd/Ctrl + I)forge-plan       # → Cria backlog com tarefas priorizadas
+
+
+
+MIT License - see [LICENSE](LICENSE) for details# Output: tests/
+
+
+
+## 👤 Author```2. Type: `@forge-ideate`forge-implement  # → Gera código TypeScript funcional
+
+
+
+**Vinicius Almeida (VSALMEID)**
+
+- GitHub: [@4youtest-vsalmeida](https://github.com/4youtest-vsalmeida)
+
+```bash3. Describe your Forge app idea:forge-test       # → Cria suite de testes
+
+## 🌟 Status
+
+# Stage 6: OPERATE - Setup deployment
+
+- **Created**: 2025-01-05
+
+- **Updated**: 2025-10-06@forge-operate   ```forge-operate    # → Prepara deployment
+
+- **Phase**: Beta
+
+- **Version**: 0.2.0
+
+
+
+---# Output: .github/workflows/, monitoring configs   I want to build a Jira app that shows GitHub PR status in issue panels
+
+
+
+**Built with ❤️ using SDD**```
+
+
+   ```# Output: App Forge pronto para produção
+
+## 🏗️ Architecture: 3-Level System
+
+4. Follow the prompts through each lifecycle stage```
+
+### Level 1 - Prompts (Orchestrators)
+
+High-level orchestrators that manage the complete flow through the 6 stages.
+
+Located in `.github/prompts/*.prompt.md`
+
+## 📋 Example Workflow---
+
+### Level 2 - Templates (Knowledge Base)
+
+Structured knowledge base for Forge patterns, modules, and best practices.
+
+Located in `.forge-sdd/templates/`
+
+```bash## 🏗️ Arquitetura: 3 Níveis
+
+### Level 3 - Specializations (Expert Implementations)
+
+Ultra-specific expertise for each Forge module use case.# Stage 1: IDEATE - Transform idea into specification
+
+Referenced from templates as needed.
+
+@forge-ideate### Nível 1: **Prompts** (Orquestradores)
+
+## 🎯 Why SDD for Forge?
+
+I need an app that tracks technical debt in Confluence pagesGerenciam o fluxo através dos 6 estágios do ciclo de vida.
+
+### Traditional Approach
+
+```
+
+Developer → Reads docs → Writes code → Debugs → Fixes scopes → Redeploys
+
+```# Output: docs/specification-document.md```
+
+
+
+### SDD Approach```structure/prompts/
+
+```
+
+User → Describes idea → System generates:├── base/
+
+  ✓ Specification
+
+  ✓ Architecture decisions```bash│   ├── system-prompt.md          # Instruções fundamentais
+
+  ✓ Implementation plan
+
+  ✓ Working code# Stage 2: ARCHITECT - Make technical decisions│   └── decision-framework.md     # Matrizes de decisão
+
+  ✓ Test suite
+
+  ✓ Deployment config@forge-architect└── commands/
+
+```
+
+    ├── forge-ideate.md           # Ideia → Especificação
+
+## 🔑 Key Features
+
+# Output: docs/ADD.md (Architecture Decision Document)    ├── forge-architect.md        # Especificação → ADD
+
+- **Forge-First Thinking**: Aware of platform limitations (25s timeout, Node.js sandbox)
+
+- **Smart Module Selection**: Chooses the right Forge module for your use case```    ├── forge-plan.md             # ADD → Backlog
+
+- **UI Kit vs Custom UI**: Makes informed decisions based on requirements
+
+- **Scope Optimization**: Requests only minimum necessary permissions    ├── forge-implement.md        # Backlog → Código
+
+- **Full Traceability**: Every code line traces back to requirements
+
+- **Quality Gates**: Validation between each lifecycle stage```bash    ├── forge-test.md             # Código → Testes
+
+
+
+## 📚 Documentation# Stage 3: PLAN - Create implementation plan    └── forge-operate.md          # Testes → Deployment
+
+
+
+- [Setup Guide](SETUP.md)@forge-plan```
+
+- [SDD Methodology](.github/SDD_METHODOLOGY.md) *(coming soon)*
+
+- [Lifecycle Stages](.github/LIFECYCLE_STAGES.md) *(coming soon)*
+
+- [Contributing](CONTRIBUTING.md) *(coming soon)*
+
+# Output: docs/implementation-plan.md### Nível 2: **Templates** (Base de Conhecimento)
+
+## 🔧 For Contributors
+
+```Padrões reutilizáveis para módulos, documentos e código Forge.
+
+See [SETUP.md](SETUP.md) for development setup instructions.
+
+
+
+The toolkit structure:
+
+``````bash```
+
+forge-sdd-toolkit/
+
+├── src/# Stage 4: IMPLEMENT - Generate codestructure/templates/
+
+│   └── forge_sdd_toolkit/  # Python package
+
+│       ├── __init__.py@forge-implement├── general/
+
+│       └── cli.py          # CLI implementation
+
+├── bin/forge-sdd           # Standalone script (legacy)│   ├── documents/               # Specification, ADD, Plans
+
+├── install.sh              # Installation script (legacy)
+
+├── structure/# Output: src/, manifest.yml, package.json│   ├── code/                    # Padrões de código
+
+│   ├── prompts/           # Stage orchestrators
+
+│   ├── templates/         # Knowledge base```│   ├── manifests/               # manifest.yml templates
+
+│   └── schemas/           # Validation schemas
+
+├── pyproject.toml         # Python package config│   └── snippets/                # Code snippets comuns
+
+└── .github/
+
+    ├── prompts/           # GitHub Copilot prompts```bash└── forge-modules/
+
+    └── copilot-instructions.md
+
+```# Stage 5: TEST - Create test suite    ├── jira/                    # Padrões Jira-específicos
+
+
+
+## 🎓 Learn More@forge-test    ├── confluence/              # Padrões Confluence
+
+
+
+- [Atlassian Forge Platform](https://developer.atlassian.com/platform/forge/)    ├── bitbucket/               # Padrões Bitbucket
+
+- [GitHub Copilot](https://github.com/features/copilot)
+
+- [uv Package Manager](https://github.com/astral-sh/uv)# Output: tests/    └── ...                      # Outros produtos
+
+- [SDD Methodology](https://github.com/4youtest-vsalmeida/forge-sdd-toolkit/wiki)
+
+``````
+
+## 📝 License
+
+
+
+MIT License - see [LICENSE](LICENSE) for details
+
+```bash### Nível 3: **Specializations** (Expertise Ultra-Específica)
+
+## 👤 Author
+
+# Stage 6: OPERATE - Setup deploymentImplementações completas para casos de uso reais.
+
+**Vinicius Almeida (VSALMEID)**
+
+- GitHub: [@4youtest-vsalmeida](https://github.com/4youtest-vsalmeida)@forge-operate
+
+
+
+## 🌟 Status```
+
+
+
+- **Created**: 2025-01-05# Output: .github/workflows/, monitoring configsstructure/specializations/
+
+- **Phase**: Beta
+
+- **Version**: 0.2.0```├── jira/
+
+
+
+---│   ├── issue-panel/             # jira:issuePanel patterns
+
+
+
+**Built with ❤️ using SDD**## 🏗️ Architecture: 3-Level System│   ├── workflow-triggers/       # Automation triggers
+
+
+│   └── custom-fields/           # Custom field implementations
+
+### Level 1 - Prompts (Orchestrators)├── confluence/
+
+High-level orchestrators that manage the complete flow through the 6 stages.│   └── macros/
+
+Located in `.github/prompts/*.prompt.md`│       ├── static-macros/       # Static content macros
+
+│       └── dynamic-macros/      # Dynamic/interactive macros
+
+### Level 2 - Templates (Knowledge Base)└── cross-product/
+
+Structured knowledge base for Forge patterns, modules, and best practices.    └── jira-confluence-sync/    # Multi-product integrations
+
+Located in `.forge-sdd/templates/````
+
+
+
+### Level 3 - Specializations (Expert Implementations)---
+
+Ultra-specific expertise for each Forge module use case.
+
+Referenced from templates as needed.## 🚀 Quick Start
+
+
+
+## 🎯 Why SDD for Forge?### Instalação
+
+
+
+### Traditional Approach#### Método 1: Instalação via GitHub (Recomendado para Testes)
+
+```
+
+Developer → Reads docs → Writes code → Debugs → Fixes scopes → Redeploys```bash
+
+```# Instalação global
+
+npm install -g git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
+
+### SDD Approach
+
+```# Ou uso direto com npx (sem instalação)
+
+User → Describes idea → System generates:npx git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git init my-app
+
+  ✓ Specification```
+
+  ✓ Architecture decisions
+
+  ✓ Implementation plan#### Método 2: Instalação via npm (Quando publicado)
+
+  ✓ Working code
+
+  ✓ Test suite```bash
+
+  ✓ Deployment config# Instalação global
+
+```npm install -g forge-sdd-toolkit
+
+
+
+## 🔑 Key Features# Ou uso direto com npx
+
+npx forge-sdd-toolkit init my-app
+
+- **Forge-First Thinking**: Aware of platform limitations (25s timeout, Node.js sandbox)```
+
+- **Smart Module Selection**: Chooses the right Forge module for your use case
+
+- **UI Kit vs Custom UI**: Makes informed decisions based on requirements#### Método 3: Clone e Build Local
+
+- **Scope Optimization**: Requests only minimum necessary permissions
+
+- **Full Traceability**: Every code line traces back to requirements```bash
+
+- **Quality Gates**: Validation between each lifecycle stage# Clone o repositório
+
+git clone https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
+
+## 📚 Documentationcd forge-sdd-toolkit
+
+
+
+- [Setup Guide](SETUP.md)# Instale dependências e build
+
+- [SDD Methodology](.github/SDD_METHODOLOGY.md) *(coming soon)*npm install
+
+- [Lifecycle Stages](.github/LIFECYCLE_STAGES.md) *(coming soon)*npm run build
+
+- [Contributing](CONTRIBUTING.md) *(coming soon)*
 
 # Use localmente
-npm link
+
+## 🔧 For Contributorsnpm link
+
 ```
+
+See [SETUP.md](SETUP.md) for development setup instructions.
 
 📖 **Guia completo de instalação**: Veja [INSTALL.md](./INSTALL.md) para instruções detalhadas, troubleshooting e testes.
 
-### Verificação da Instalação
+The toolkit structure:
 
-```bash
-# Verificar versão
-forge-sdd --version
-# Deve exibir: 0.1.0
+```### Verificação da Instalação
 
-# Ver comandos disponíveis
-forge-sdd --help
-```
+forge-sdd-toolkit/
 
-### Uso Básico
+├── bin/forge-sdd           # Python CLI script```bash
 
-#### 0️⃣ **INIT**: Criar novo projeto SDD
+├── install.sh              # Installation script# Verificar versão
 
-```bash
-# Criar estrutura de projeto
-forge-sdd init my-forge-app
+├── structure/forge-sdd --version
+
+│   ├── prompts/           # Stage orchestrators# Deve exibir: 0.1.0
+
+│   ├── templates/         # Knowledge base
+
+│   └── schemas/           # Validation schemas# Ver comandos disponíveis
+
+└── .github/forge-sdd --help
+
+    ├── prompts/           # GitHub Copilot prompts```
+
+    └── copilot-instructions.md
+
+```### Uso Básico
+
+
+
+## 🎓 Learn More#### 0️⃣ **INIT**: Criar novo projeto SDD
+
+
+
+- [Atlassian Forge Platform](https://developer.atlassian.com/platform/forge/)```bash
+
+- [GitHub Copilot](https://github.com/features/copilot)# Criar estrutura de projeto
+
+- [SDD Methodology](https://github.com/4youtest-vsalmeida/forge-sdd-toolkit/wiki)forge-sdd init my-forge-app
+
 cd my-forge-app
 
+## 📝 License
+
 # Estrutura criada:
-# my-forge-app/
+
+MIT License - see [LICENSE](LICENSE) for details# my-forge-app/
+
 #   ├── prompts/        # Prompts dos 6 estágios SDD
-#   ├── templates/      # Templates de documentos
+
+## 👤 Author#   ├── templates/      # Templates de documentos
+
 #   ├── schemas/        # JSON Schemas para validação
-#   ├── docs/           # Documentação do projeto
-#   └── README.md       # Guia de uso
+
+**Vinicius Almeida (VSALMEID)**#   ├── docs/           # Documentação do projeto
+
+- GitHub: [@4youtest-vsalmeida](https://github.com/4youtest-vsalmeida)#   └── README.md       # Guia de uso
+
 ```
+
+## 🌟 Status
 
 #### 1️⃣ **IDEATE**: Transforme sua ideia em especificação
 
-```bash
-# Exibir prompt do estágio IDEATE
+- **Created**: 2025-01-05
+
+- **Phase**: Beta```bash
+
+- **Version**: 0.2.0# Exibir prompt do estágio IDEATE
+
 forge-sdd prompt ideate
 
+---
+
 # Copiar prompt para clipboard
-forge-sdd prompt ideate --copy
+
+**Built with ❤️ using SDD**forge-sdd prompt ideate --copy
+
 ```
 
 **Processo**:
