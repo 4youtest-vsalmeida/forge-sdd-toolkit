@@ -5,8 +5,17 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![Version](https://img.shields.io/badge/version-0.1.0-orange)](./CHANGELOG.md)
+[![Install](https://img.shields.io/badge/install-npm%20|%20git-red)](./INSTALL.md)
 
 Toolkit de **context engineering** que transforma a **ideação do usuário em linguagem natural** na **orquestração e execução automática** do ciclo de vida completo de apps **Atlassian Forge** — desde **especificação** até **operação** — tomando **decisões Forge-aware** de forma **autônoma**.
+
+```bash
+# Instalação rápida via GitHub
+npm install -g git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
+
+# Ou uso direto
+npx git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git init my-app
+```
 
 ---
 
@@ -116,55 +125,123 @@ structure/specializations/
 
 ### Instalação
 
+#### Método 1: Instalação via GitHub (Recomendado para Testes)
+
+```bash
+# Instalação global
+npm install -g git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
+
+# Ou uso direto com npx (sem instalação)
+npx git+https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git init my-app
+```
+
+#### Método 2: Instalação via npm (Quando publicado)
+
+```bash
+# Instalação global
+npm install -g forge-sdd-toolkit
+
+# Ou uso direto com npx
+npx forge-sdd-toolkit init my-app
+```
+
+#### Método 3: Clone e Build Local
+
 ```bash
 # Clone o repositório
-git clone https://github.com/vsalmeid/forge-sdd-toolkit.git
+git clone https://github.com/4youtest-vsalmeida/forge-sdd-toolkit.git
 cd forge-sdd-toolkit
 
-# Instale dependências
+# Instale dependências e build
 npm install
-
-# Build o toolkit
 npm run build
+
+# Use localmente
+npm link
+```
+
+📖 **Guia completo de instalação**: Veja [INSTALL.md](./INSTALL.md) para instruções detalhadas, troubleshooting e testes.
+
+### Verificação da Instalação
+
+```bash
+# Verificar versão
+forge-sdd --version
+# Deve exibir: 0.1.0
+
+# Ver comandos disponíveis
+forge-sdd --help
 ```
 
 ### Uso Básico
 
+#### 0️⃣ **INIT**: Criar novo projeto SDD
+
+```bash
+# Criar estrutura de projeto
+forge-sdd init my-forge-app
+cd my-forge-app
+
+# Estrutura criada:
+# my-forge-app/
+#   ├── prompts/        # Prompts dos 6 estágios SDD
+#   ├── templates/      # Templates de documentos
+#   ├── schemas/        # JSON Schemas para validação
+#   ├── docs/           # Documentação do projeto
+#   └── README.md       # Guia de uso
+```
+
 #### 1️⃣ **IDEATE**: Transforme sua ideia em especificação
 
 ```bash
-forge-ideate
+# Exibir prompt do estágio IDEATE
+forge-sdd prompt ideate
+
+# Copiar prompt para clipboard
+forge-sdd prompt ideate --copy
 ```
 
-**Input**: Descreva seu app em linguagem natural  
-**Output**: `specification-document.md` formal e estruturado
+**Processo**:
+1. Cole o prompt no GitHub Copilot Chat
+2. Descreva seu app em linguagem natural
+3. Copilot gera `docs/specification-document.md`
+4. Valide: `forge-sdd validate docs/specification-document.md`
 
 #### 2️⃣ **ARCHITECT**: Receba decisões técnicas automáticas
 
 ```bash
-forge-architect
+forge-sdd prompt architect --copy
 ```
 
-**Input**: Specification document  
-**Output**: `architecture-decision-document.md` (ADD) com escolhas de módulos, UI, APIs
+**Processo**:
+1. Cole prompt + specification no Copilot
+2. Copilot analisa requisitos e decide módulos Forge
+3. Gera `docs/architecture-decision-document.md` (ADD)
+4. Valide: `forge-sdd validate docs/architecture-decision-document.md`
 
 #### 3️⃣ **PLAN**: Obtenha backlog priorizado
 
 ```bash
-forge-plan
+forge-sdd prompt plan --copy
 ```
 
-**Input**: Specification + ADD  
-**Output**: `implementation-plan.md` com épicos, stories e tasks
+**Processo**:
+1. Cole prompt + specification + ADD no Copilot
+2. Copilot quebra em épicos, stories e tasks
+3. Gera `docs/implementation-plan.md`
+4. Valide: `forge-sdd validate docs/implementation-plan.md`
 
 #### 4️⃣ **IMPLEMENT**: Gere código funcional
 
 ```bash
-forge-implement
+forge-sdd prompt implement --copy
 ```
 
-**Input**: Specification + ADD + Plan  
-**Output**: Código TypeScript/JavaScript completo
+**Processo**:
+1. Cole prompt + todos os documentos anteriores
+2. Copilot gera código TypeScript/JavaScript
+3. Cria manifest.yml, handlers, UI components
+4. Código tem rastreabilidade completa (REQ-XXX → TASK-XXX)
 
 #### 5️⃣ **TEST**: Crie suite de testes
 
