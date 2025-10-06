@@ -40,10 +40,18 @@ mkdir -p "$TARGET_DIR/schemas"
 mkdir -p "$TARGET_DIR/templates/general/documents"
 mkdir -p "$TARGET_DIR/templates/forge-modules"
 
-# Copiar prompts para .github/prompts/ (para slash commands)
+# Copiar prompts para .github/prompts/ (RAIZ, com extensão .prompt.md)
 echo -e "${BLUE}▶${NC} Copiando prompts para .github/prompts/..."
-cp -r "$TOOLKIT_ROOT/structure/prompts/base" "$TARGET_DIR/.github/prompts/"
-cp -r "$TOOLKIT_ROOT/structure/prompts/commands" "$TARGET_DIR/.github/prompts/"
+
+# Copiar cada prompt renomeando para .prompt.md
+for prompt_file in "$TOOLKIT_ROOT/structure/prompts/commands"/*.md; do
+    filename=$(basename "$prompt_file" .md)
+    cp "$prompt_file" "$TARGET_DIR/.github/prompts/${filename}.prompt.md"
+done
+
+# Copiar prompts base (para referência interna, não são slash commands)
+mkdir -p "$TARGET_DIR/.github/prompts/_base"
+cp "$TOOLKIT_ROOT/structure/prompts/base"/*.md "$TARGET_DIR/.github/prompts/_base/"
 
 # Copiar schemas
 echo -e "${BLUE}▶${NC} Copiando schemas..."
@@ -228,43 +236,16 @@ cat > "$TARGET_DIR/.vscode/settings.json" << 'EOF'
 {
   "github.copilot.chat.codeGeneration.instructions": [
     {
-      "file": ".github/prompts/base/system-prompt.md"
-    }
-  ],
-  "github.copilot.chat.slashCommands": [
-    {
-      "command": "forge-ideate",
-      "description": "IDEATE: Transform idea into formal specification",
-      "prompt": ".github/prompts/commands/forge-ideate.md"
-    },
-    {
-      "command": "forge-architect",
-      "description": "ARCHITECT: Make technical decisions based on specification",
-      "prompt": ".github/prompts/commands/forge-architect.md"
-    },
-    {
-      "command": "forge-plan",
-      "description": "PLAN: Create implementation backlog from architecture",
-      "prompt": ".github/prompts/commands/forge-plan.md"
-    },
-    {
-      "command": "forge-implement",
-      "description": "IMPLEMENT: Generate code from plan",
-      "prompt": ".github/prompts/commands/forge-implement.md"
-    },
-    {
-      "command": "forge-test",
-      "description": "TEST: Create test suite from implementation",
-      "prompt": ".github/prompts/commands/forge-test.md"
-    },
-    {
-      "command": "forge-operate",
-      "description": "OPERATE: Create deployment and operations guide",
-      "prompt": ".github/prompts/commands/forge-operate.md"
+      "file": ".github/prompts/_base/system-prompt.md"
     }
   ]
 }
 EOF
+
+# Nota: Slash commands personalizados não são mais suportados no VS Code.
+# O GitHub Copilot agora usa automaticamente arquivos .prompt.md em .github/prompts/
+# quando você digita @ no chat. Basta ter os arquivos com extensão .prompt.md
+# na raiz de .github/prompts/ e eles aparecerão automaticamente.
 
 # Resumo
 echo ""
@@ -274,28 +255,31 @@ echo "============================================================"
 echo ""
 echo -e "${BLUE}📁 Estrutura criada em:${NC} $TARGET_DIR"
 echo ""
-echo -e "${GREEN}✓${NC} Prompts copiados para .github/prompts/"
+echo -e "${GREEN}✓${NC} Prompts copiados para .github/prompts/ (com extensão .prompt.md)"
 echo -e "${GREEN}✓${NC} Schemas copiados para schemas/"
 echo -e "${GREEN}✓${NC} Templates copiados para templates/"
-echo -e "${GREEN}✓${NC} Slash commands configurados no VS Code"
+echo -e "${GREEN}✓${NC} VS Code configurado"
 echo ""
 echo -e "${BLUE}🎯 Próximos passos:${NC}"
 echo ""
 echo "1. Abra o projeto no VS Code:"
 echo -e "   ${YELLOW}code $TARGET_DIR${NC}"
 echo ""
-echo "2. Inicie o GitHub Copilot Chat"
+echo "2. Abra o GitHub Copilot Chat"
 echo ""
-echo "3. Use os slash commands:"
-echo -e "   ${YELLOW}@workspace /forge-ideate${NC} - Criar especificação"
-echo -e "   ${YELLOW}@workspace /forge-architect${NC} - Decisões técnicas"
-echo -e "   ${YELLOW}@workspace /forge-plan${NC} - Criar backlog"
-echo -e "   ${YELLOW}@workspace /forge-implement${NC} - Gerar código"
-echo -e "   ${YELLOW}@workspace /forge-test${NC} - Criar testes"
-echo -e "   ${YELLOW}@workspace /forge-operate${NC} - Deployment"
+echo "3. Digite @ para ver os prompts disponíveis:"
+echo -e "   ${YELLOW}@forge-ideate${NC} - Criar especificação"
+echo -e "   ${YELLOW}@forge-architect${NC} - Decisões técnicas"
+echo -e "   ${YELLOW}@forge-plan${NC} - Criar backlog"
+echo -e "   ${YELLOW}@forge-implement${NC} - Gerar código"
+echo -e "   ${YELLOW}@forge-test${NC} - Criar testes"
+echo -e "   ${YELLOW}@forge-operate${NC} - Deployment"
 echo ""
-echo "4. Ou comece descrevendo seu app:"
+echo "4. Ou comece descrevendo seu app diretamente:"
 echo -e "   ${YELLOW}\"Preciso de um painel em Jira que mostre status de PRs\"${NC}"
+echo ""
+echo -e "${BLUE}💡 Dica:${NC} Os arquivos .prompt.md aparecem automaticamente quando você"
+echo "    digita @ no Copilot Chat. Não precisa configurar slash commands!"
 echo ""
 echo -e "${BLUE}📚 Documentação:${NC} Ver README.md no projeto"
 echo ""
