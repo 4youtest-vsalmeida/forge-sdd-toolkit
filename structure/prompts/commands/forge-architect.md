@@ -409,50 +409,203 @@ export default defineConfig({
 
 ### Decision: Directory Structure (Custom UI)
 
-**CRITICAL REQUIREMENT**: Custom UI must be built to `static/<app-name>/`
+**⚠️ CRITICAL**: Follow the official Atlassian Forge structure. See [Forge Custom UI Architecture Guide](../../../docs/best-practices/forge-custom-ui-architecture.md) for complete details.
 
-**Correct Structure**:
+**Key Principle**: Backend (`src/`) and Frontend (`static/<app>/`) are COMPLETELY SEPARATE with independent compilation.
+
+**Correct Structure** (official Atlassian pattern):
 ```
 my-forge-app/
-├── manifest.yml              # Resources key MUST match static directory
-├── src/
-│   ├── index.tsx            # Custom UI React app
-│   ├── resolvers/
-│   └── ...
-├── static/
-│   └── my-forge-app/        # ← Build output directory (matches manifest)
-│       ├── index.html
-│       ├── assets/
-│       └── ...
-├── vite.config.ts           # outDir: 'static/my-forge-app'
-└── package.json
+├── manifest.yml            # Forge app configuration
+├── package.json            # Backend dependencies ONLY
+├── tsconfig.json           # TypeScript for backend ONLY
+├── .gitignore              # Root gitignore
+│
+├── src/                    # ✅ BACKEND: Forge compiles automatically
+│   ├── index.ts            # Entry point for resolvers
+│   ├── resolvers/          # Business logic functions
+│   │   ├── issue.ts
+│   │   └── user.ts
+│   ├── services/           # External integrations
+│   └── types/              # Backend TypeScript types
+│
+└── static/                 # ✅ FRONTEND: Custom UI modules
+    └── my-app/             # Module name (= resource key in manifest)
+        ├── .gitignore      # Frontend-specific gitignore
+        ├── package.json    # Frontend dependencies ONLY
+        ├── tsconfig.json   # TypeScript for frontend ONLY
+        ├── vite.config.ts  # Vite configuration
+        │
+        ├── public/         # Static assets
+        │   └── index.html  # HTML entry point
+        │
+        ├── src/            # React source code
+        │   ├── main.tsx    # React entry point
+        │   ├── App.tsx     # Root component
+        │   ├── components/
+        │   ├── hooks/
+        │   ├── services/   # API calls to resolvers
+        │   └── types/      # Frontend TypeScript types
+        │
+        └── build/          # ⚠️ Vite output (DO NOT COMMIT)
+            ├── index.html
+            └── assets/
+                ├── main-[hash].js
+                └── main-[hash].css
+```
+
+**Why This Structure?**
+
+1. **`src/` is ONLY for backend**:
+   - Forge CLI automatically compiles TypeScript files in `src/`
+   - Mixing frontend here causes compilation conflicts
+
+2. **`static/` contains frontend modules**:
+   - Each subdirectory = independent Custom UI module
+   - Directory name MUST match resource key in manifest.yml
+   - Forge serves these files via CDN
+
+3. **Each module has own package.json**:
+   - Frontend dependencies ≠ backend dependencies
+   - Allows multiple modules with different library versions
+
+4. **Separate tsconfig.json files**:
+   - Backend targets Node.js (CommonJS, no DOM)
+   - Frontend targets browsers (ESM, DOM, JSX)
+
+**Vite Configuration** (`static/my-app/vite.config.ts`):
+```typescript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
+
+export default defineConfig({
+  // ⚠️ REQUIRED: Use relative paths for assets
+  base: './',
+  
+  plugins: [react()],
+  
+  build: {
+    outDir: 'build',         // Build inside module directory
+    emptyOutDir: true,
+    assetsDir: 'assets',
+    sourcemap: true,
+  },
+  
+  server: {
+    port: 3000,
+    strictPort: true,
+    host: true,
+  },
+});
+```
+
+**TypeScript Configurations**:
+
+**Root `tsconfig.json`** (backend):
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "static", "dist"]
+}
+```
+
+**`static/my-app/tsconfig.json`** (frontend):
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "types": ["vite/client"]
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "build"]
+}
 ```
 
 **Manifest Configuration**:
 ```yaml
 resources:
-  - key: my-forge-app        # MUST match static directory name
-    path: static/my-forge-app
+  - key: my-app                 # MUST match static/ directory name
+    path: static/my-app/build   # Points to Vite build output
 
 modules:
-  jira:globalPage:
-    - key: my-global-page
-      resource: my-forge-app # References the resource key
-      title: My App
+  jira:issuePanel:
+    - key: my-issue-panel
+      resource: my-app          # References the resource key
+      resolver:
+        function: resolver
+      title: My Panel
 ```
 
-**Common Mistakes**:
-- ❌ Building to `dist/` or `build/` → Deployment fails
-- ❌ Mismatched resource key and directory name → Module won't load
-- ❌ Missing `static/` prefix → 404 errors
-- ✅ Correct: `static/<app-name>/` with matching manifest resource key
+**Root `.gitignore`**:
+```gitignore
+# Build outputs (DO NOT COMMIT)
+static/*/build/
+static/*/dist/
+
+# Dependencies
+node_modules/
+static/*/node_modules/
+
+# Forge
+.tunnel
+```
+
+**Development Workflow**:
+```bash
+# Terminal 1: Frontend dev server
+cd static/my-app
+npm run dev          # Vite at http://localhost:3000
+
+# Terminal 2: Forge tunnel
+forge tunnel         # Connects to local dev server
+
+# Build for deploy
+cd static/my-app
+npm run build        # Creates static/my-app/build/
+
+# Deploy
+forge deploy
+```
+
+**Common Mistakes to Avoid**:
+- ❌ `src/frontend/` → Frontend does NOT go in src/
+- ❌ Committing `static/*/build/` → Must be in .gitignore
+- ❌ Missing `base: './'` in vite.config.ts → Assets won't load
+- ❌ Using absolute paths → Use relative imports
+- ❌ Single package.json → Must have separate for backend/frontend
+- ✅ Correct: `static/<app>/src/` for source, `static/<app>/build/` for output
 
 **Validation Checklist**:
-- [ ] Vite/Webpack `outDir` = `static/<app-name>`
+- [ ] Source code in `src/frontend/` (committed to git)
+- [ ] Two TypeScript configs: root `tsconfig.json` + `src/frontend/tsconfig.json`
+- [ ] Vite `root` = `src/frontend`
+- [ ] Vite `build.outDir` = `../../static/<app-name>` (relative to root)
 - [ ] Manifest `resources[0].path` = `static/<app-name>`
 - [ ] Manifest `resources[0].key` = `<app-name>`
 - [ ] Module `resource` field references correct key
-- [ ] Directory exists before first build
+- [ ] `.gitignore` includes `static/` directory
+- [ ] `package.json` has `dev` and `build` scripts
+- [ ] Root `tsconfig.json` excludes `src/frontend`
+
+**Key Point**: Forge CLI auto-compiles `src/index.ts` and `src/resolvers/`, while Vite separately compiles `src/frontend/` to `static/`.
 
 ### Decision Summary
 
