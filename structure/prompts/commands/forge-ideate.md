@@ -9,7 +9,7 @@ outputs:
   - specification-document.md
 references:
   - ../base/system-prompt.md
-  - ../../templates/general/documents/specification-template.md
+  - ../../steps-templates/specification-template.md
 ---
 
 # FORGE-IDEATE: Transform Ideas into Specifications

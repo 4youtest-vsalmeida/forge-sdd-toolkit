@@ -132,9 +132,9 @@ structure/
 │       └── decision-framework.md # Universal decision logic
 │
 ├── Level 2: Templates (Knowledge Base)
-│   ├── documents/
+│   ├── steps-templates/
 │   │   ├── specification-template.md    # IDEATE output
-│   │   ├── ADD-template.md              # ARCHITECT output
+│   │   ├── architecture-decision-document-template.md  # ARCHITECT output
 │   │   ├── implementation-plan-template.md  # PLAN output
 │   │   └── test-plan-template.md        # TEST output
 │   └── forge-modules/
@@ -421,8 +421,8 @@ structure/
 ├── prompts/
 │   ├── commands/          # L1: 6 lifecycle prompts
 │   └── base/              # L1: System prompts
+├── steps-templates/       # L2: SDD stages templates (4)
 ├── templates/
-│   ├── documents/         # L2: Document templates (4)
 │   └── forge-modules/     # L2: Module templates (5+)
 └── specializations/
     ├── jira/              # L3: Jira implementations

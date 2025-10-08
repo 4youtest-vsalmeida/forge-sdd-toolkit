@@ -433,7 +433,7 @@ author: VSALMEID
 
 ### C. Related Documents
 
-- Architecture Decision Document: `ADD-[app-name].md` (created in ARCHITECT stage)
+- Architecture Decision Document: `architecture-decision-document-[app-name].md` (created in ARCHITECT stage)
 - Implementation Plan: `implementation-plan-[app-name].md` (created in PLAN stage)
 
 ---

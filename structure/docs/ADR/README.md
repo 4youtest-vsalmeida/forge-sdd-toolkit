@@ -279,7 +279,8 @@ wc -l ADR-*.md
 
 ### ADR Template Generator (Future)
 ```bash
-forge-sdd adr create "Your Decision Title"
+# Future: ADR generation via GitHub Copilot
+@forge-architect-adr "Your Decision Title"
 # Generates ADR-XXX-your-decision-title.md from template
 ```
 

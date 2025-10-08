@@ -1,6 +1,0 @@
-include README.md
-include LICENSE
-recursive-include structure *.md
-recursive-include structure *.json
-recursive-include structure *.yaml
-recursive-include structure *.yml
